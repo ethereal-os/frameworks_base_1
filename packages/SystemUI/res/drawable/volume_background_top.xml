@@ -20,8 +20,8 @@
         <shape>
             <size android:width="@dimen/volume_dialog_panel_width" />
             <solid android:color="?androidprv:attr/colorSurface" />
-            <corners android:topLeftRadius="@dimen/volume_dialog_panel_width_half"
-                android:topRightRadius="@dimen/volume_dialog_panel_width_half"/>
+            <corners android:topLeftRadius="6dp"
+                android:topRightRadius="6dp"/>
         </shape>
     </item>
 </layer-list>
