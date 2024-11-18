@@ -729,7 +729,7 @@
     <!-- With the large clock, move up slightly from the center -->
     <dimen name="keyguard_large_clock_top_margin">-60dp</dimen>
 
-    <dimen name="notification_scrim_corner_radius">32dp</dimen>
+    <dimen name="notification_scrim_corner_radius">10dp</dimen>
 
     <!-- The minimum amount the user needs to swipe to go to the camera / phone. -->
     <dimen name="keyguard_min_swipe_amount">110dp</dimen>
@@ -1193,7 +1193,7 @@
     <item name="controls_task_view_width_percentage" translatable="false" format="float" type="dimen">1.0</item>
     <dimen name="controls_task_view_right_margin">0dp</dimen>
 
-    <dimen name="controls_panel_corner_radius">42dp</dimen>
+    <dimen name="controls_panel_corner_radius">10dp</dimen>
 
     <!-- Home Controls activity view detail panel-->
     <dimen name="controls_activity_view_corner_radius">@*android:dimen/config_bottomDialogCornerRadius</dimen>
@@ -1530,7 +1530,7 @@
     <!-- Minimum width of switch -->
     <dimen name="settingslib_min_switch_width">44dp</dimen>
     <!-- Radius of switch bar -->
-    <dimen name="settingslib_switch_bar_radius">32dp</dimen>
+    <dimen name="settingslib_switch_bar_radius">10dp</dimen>
     <!-- Margin of switch thumb -->
     <dimen name="settingslib_switch_thumb_margin">8dp</dimen>
     <!-- Size of switch thumb -->
@@ -1540,7 +1540,7 @@
     <!-- Height of switch track -->
     <dimen name="settingslib_switch_track_height">20dp</dimen>
     <!-- Radius of switch track -->
-    <dimen name="settingslib_switch_track_radius">32dp</dimen>
+    <dimen name="settingslib_switch_track_radius">10dp</dimen>
 
     <!-- Height percentage of the parent container occupied by the communal view -->
     <item name="communal_source_height_percentage" format="float" type="dimen">0.80</item>
@@ -1592,7 +1592,7 @@
     <dimen name="dream_overlay_anim_blur_radius">50dp</dimen>
     <dimen name="dream_overlay_bottom_affordance_height">64dp</dimen>
     <dimen name="dream_overlay_bottom_affordance_width">64dp</dimen>
-    <dimen name="dream_overlay_bottom_affordance_radius">32dp</dimen>
+    <dimen name="dream_overlay_bottom_affordance_radius">10dp</dimen>
     <dimen name="dream_overlay_bottom_affordance_padding">14dp</dimen>
     <dimen name="dream_overlay_complication_clock_time_text_size">86dp</dimen>
     <dimen name="dream_overlay_complication_clock_subtitle_text_size">24sp</dimen>

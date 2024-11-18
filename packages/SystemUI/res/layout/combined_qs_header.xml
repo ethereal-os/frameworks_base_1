@@ -27,7 +27,7 @@
     android:paddingLeft="@dimen/qs_panel_padding"
     android:paddingRight="@dimen/qs_panel_padding"
     android:visibility="gone"
-    android:theme="@style/QSHeaderTheme"
+    android:theme="@style/Theme.SystemUI.QuickSettings.Header"
     app:layoutDescription="@xml/combined_qs_header_scene">
 
     <androidx.constraintlayout.widget.Guideline
@@ -78,7 +78,6 @@
         android:transformPivotY="24dp"
         android:scaleX="1"
         android:scaleY="1"
-        systemui:showDark="false"
     />
 
     <com.android.systemui.statusbar.policy.VariableDateView

@@ -285,6 +285,13 @@ constructor(
                 lastInsets?.let { updateConstraintsForInsets(header, it) }
                 updateResources()
             }
+            
+            
+            override fun onThemeChanged() {
+                clock.setTextAppearance(R.style.TextAppearance_QS_Status)
+                date.setTextAppearance(R.style.TextAppearance_QS_Status)
+                qsCarrierGroup.updateTextAppearance(R.style.TextAppearance_QS_Status_Carriers)
+            }
         }
 
     fun updateQsBatteryStyle() {
