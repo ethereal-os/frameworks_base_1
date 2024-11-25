@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.internal.util.voltage;
+package com.android.internal.util.ethereal;
 
 import android.util.Log;
 

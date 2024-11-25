@@ -100,7 +100,7 @@ import com.android.server.companion.virtual.VirtualDeviceManagerInternal;
 import com.android.server.contentcapture.ContentCaptureManagerInternal;
 import com.android.server.uri.UriGrantsManagerInternal;
 import com.android.server.wm.WindowManagerInternal;
-import com.android.server.voltage.ParallelSpaceManagerService;
+import com.android.server.ethereal.ParallelSpaceManagerService;
 
 import java.util.HashSet;
 import java.util.List;

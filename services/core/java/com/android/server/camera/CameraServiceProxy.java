@@ -84,7 +84,7 @@ import com.android.server.LocalServices;
 import com.android.server.ServiceThread;
 import com.android.server.SystemService;
 import com.android.server.wm.WindowManagerInternal;
-import com.android.server.voltage.ParallelSpaceManagerService;
+import com.android.server.ethereal.ParallelSpaceManagerService;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

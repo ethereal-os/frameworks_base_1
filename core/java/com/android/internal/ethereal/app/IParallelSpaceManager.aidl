@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.internal.voltage.app;
+package com.android.internal.ethereal.app;
 
 import android.content.pm.UserInfo;
 

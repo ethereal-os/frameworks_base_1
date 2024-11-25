@@ -77,7 +77,7 @@ import androidx.annotation.DimenRes;
 
 import com.android.internal.config.sysui.SystemUiDeviceConfigFlags;
 import com.android.internal.policy.GestureNavigationSettingsObserver;
-import com.android.internal.util.voltage.VoltageUtils;
+import com.android.internal.util.ethereal.EtherealUtils;
 import com.android.systemui.Dependency;
 import com.android.systemui.dagger.qualifiers.Background;
 import com.android.systemui.dagger.qualifiers.Main;
@@ -1342,55 +1342,55 @@ public class EdgeBackGestureHandler implements PluginListener<NavigationEdgeBack
             default:
                 break;
             case 1: // Voice search
-                VoltageUtils.launchVoiceSearch(mContext);
+                EtherealUtils.launchVoiceSearch(mContext);
                 break;
             case 2: // Camera
-                VoltageUtils.launchCamera(mContext);
+                EtherealUtils.launchCamera(mContext);
                 break;
             case 3: // Flashlight
-                VoltageUtils.toggleCameraFlash();
+                EtherealUtils.toggleCameraFlash();
                 break;
             case 4: // Application
                 launchApp(mContext, mIsOnLeftEdge, isVertical);
                 break;
             case 5: // Volume panel
-                VoltageUtils.toggleVolumePanel(mContext);
+                EtherealUtils.toggleVolumePanel(mContext);
                 break;
             case 6: // Screen off
-                VoltageUtils.switchScreenOff(mContext);
+                EtherealUtils.switchScreenOff(mContext);
                 break;
             case 7: // Screenshot
-                VoltageUtils.takeScreenshot();
+                EtherealUtils.takeScreenshot();
                 break;
             case 8: // Notification panel
-                VoltageUtils.toggleNotifications();
+                EtherealUtils.toggleNotifications();
                 break;
             case 9: // QS panel
-                VoltageUtils.toggleQsPanel();
+                EtherealUtils.toggleQsPanel();
                 break;
             case 10: // Clear notifications
-                VoltageUtils.clearAllNotifications();
+                EtherealUtils.clearAllNotifications();
                 break;
             case 11: // Ringer modes
-                VoltageUtils.toggleRingerModes(mContext);
+                EtherealUtils.toggleRingerModes(mContext);
                 break;
             case 12: // Kill app
-                VoltageUtils.killForegroundApp();
+                EtherealUtils.killForegroundApp();
                 break;
             case 13: // Switch recent app
-                VoltageUtils.switchToLastApp(mContext);
+                EtherealUtils.switchToLastApp(mContext);
                 break;
             case 14: // Powermenu
-                VoltageUtils.showPowerMenu();
+                EtherealUtils.showPowerMenu();
                 break;
             case 15: // Recents
-                VoltageUtils.sendKeycode(KeyEvent.KEYCODE_APP_SWITCH);
+                EtherealUtils.sendKeycode(KeyEvent.KEYCODE_APP_SWITCH);
                 break;
             case 16: // Go forward
-                VoltageUtils.sendKeycode(KeyEvent.KEYCODE_FORWARD);
+                EtherealUtils.sendKeycode(KeyEvent.KEYCODE_FORWARD);
                 break;
             case 17: // Menu
-                VoltageUtils.sendKeycode(KeyEvent.KEYCODE_MENU);
+                EtherealUtils.sendKeycode(KeyEvent.KEYCODE_MENU);
                 break;
         }
     }

@@ -162,7 +162,7 @@ import com.android.server.storage.DeviceStorageMonitorInternal;
 import com.android.server.utils.Slogf;
 import com.android.server.utils.TimingsTraceAndSlog;
 import com.android.server.wm.ActivityTaskManagerInternal;
-import com.android.server.voltage.ParallelSpaceManagerService;
+import com.android.server.ethereal.ParallelSpaceManagerService;
 
 import libcore.io.IoUtils;
 

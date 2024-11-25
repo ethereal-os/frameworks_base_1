@@ -150,7 +150,7 @@ import com.android.server.pm.pkg.PackageStateInternal;
 import com.android.server.wm.ActivityServiceConnectionsHolder;
 import com.android.server.wm.WindowManagerService;
 import com.android.server.wm.WindowProcessController;
-import com.android.server.voltage.ParallelSpaceManagerService;
+import com.android.server.ethereal.ParallelSpaceManagerService;
 
 import dalvik.system.VMRuntime;
 

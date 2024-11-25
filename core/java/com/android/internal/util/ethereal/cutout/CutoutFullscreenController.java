@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.android.internal.util.voltage.cutout;
+package com.android.internal.util.ethereal.cutout;
 
 import android.content.ContentResolver;
 import android.content.Context;

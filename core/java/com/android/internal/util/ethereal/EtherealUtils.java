@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.internal.util.voltage;
+package com.android.internal.util.ethereal;
 
 import static android.view.DisplayCutout.BOUNDS_POSITION_LEFT;
 import static android.view.DisplayCutout.BOUNDS_POSITION_RIGHT;
@@ -85,7 +85,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class VoltageUtils {
+public class EtherealUtils {
 
     /**
      * @hide
@@ -152,7 +152,7 @@ public class VoltageUtils {
         }
     }
 
-    private static final String TAG = "VoltageUtils";
+    private static final String TAG = "EtherealUtils";
 
     private static final boolean DEBUG = false;
 

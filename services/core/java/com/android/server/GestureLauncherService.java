@@ -49,7 +49,7 @@ import com.android.internal.logging.UiEvent;
 import com.android.internal.logging.UiEventLogger;
 import com.android.internal.logging.UiEventLoggerImpl;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
-import com.android.internal.util.voltage.VoltageUtils;
+import com.android.internal.util.ethereal.EtherealUtils;
 import com.android.server.statusbar.StatusBarManagerInternal;
 import com.android.server.wm.WindowManagerInternal;
 
@@ -634,7 +634,7 @@ public class GestureLauncherService extends SystemService {
                 mUiEventLogger.log(GestureLauncherEvent.GESTURE_CAMERA_DOUBLE_TAP_POWER);
             }
         } else if (toggleFlashlight) {
-            VoltageUtils.toggleCameraFlash();
+            EtherealUtils.toggleCameraFlash();
         } else if (launchEmergencyGesture) {
             Slog.i(TAG, "Emergency gesture detected, launching.");
             launchEmergencyGesture = handleEmergencyGesture();

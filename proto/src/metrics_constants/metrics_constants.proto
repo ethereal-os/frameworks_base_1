@@ -7445,7 +7445,7 @@ message MetricsEvent {
     // Add new aosp constants above this line.
     // END OF AOSP CONSTANTS
 
-    // VoltageOS Metrics
-    VOLTAGE = 2772;
+    // ETHEREAL OS Metrics
+    ETHEREAL = 2772;
   }
 }

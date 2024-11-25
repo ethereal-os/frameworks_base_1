@@ -139,7 +139,7 @@ import com.android.server.wm.BackgroundActivityStartController.BalCode;
 import com.android.server.wm.BackgroundActivityStartController.BalVerdict;
 import com.android.server.wm.LaunchParamsController.LaunchParams;
 import com.android.server.wm.TaskFragment.EmbeddingCheckResult;
-import com.android.server.voltage.ParallelSpaceManagerService;
+import com.android.server.ethereal.ParallelSpaceManagerService;
 
 import java.io.PrintWriter;
 import java.lang.annotation.Retention;

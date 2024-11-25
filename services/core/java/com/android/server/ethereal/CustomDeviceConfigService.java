@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package com.android.server.voltage;
+package com.android.server.ethereal;
 
 import android.content.Context;
 import com.android.server.SystemService;
 
-import com.android.internal.util.voltage.DeviceConfigUtils;
+import com.android.internal.util.ethereal.DeviceConfigUtils;
 
 public class CustomDeviceConfigService extends SystemService {
 

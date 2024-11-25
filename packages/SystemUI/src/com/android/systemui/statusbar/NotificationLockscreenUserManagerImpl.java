@@ -56,7 +56,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
 
-import com.android.internal.voltage.app.ParallelSpaceManager;
+import com.android.internal.ethereal.app.ParallelSpaceManager;
 import com.android.internal.statusbar.NotificationVisibility;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.systemui.Dumpable;

@@ -56,7 +56,7 @@ import com.android.internal.annotations.GuardedBy;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.content.FileSystemProvider;
 import com.android.internal.util.IndentingPrintWriter;
-import com.android.internal.voltage.app.ParallelSpaceManager;
+import com.android.internal.ethereal.app.ParallelSpaceManager;
 
 import java.io.File;
 import java.io.FileDescriptor;

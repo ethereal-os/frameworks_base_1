@@ -264,7 +264,7 @@ import com.android.internal.util.ArrayUtils;
 import com.android.internal.util.FastPrintWriter;
 import com.android.internal.util.FrameworkStatsLog;
 import com.android.internal.util.function.pooled.PooledLambda;
-import com.android.internal.util.voltage.PixelPropsUtils;
+import com.android.internal.util.ethereal.PixelPropsUtils;
 import com.android.server.LocalManagerRegistry;
 import com.android.server.LocalServices;
 import com.android.server.SystemService;
@@ -292,7 +292,7 @@ import com.android.server.usage.AppStandbyInternal;
 import com.android.server.wallpaper.WallpaperManagerInternal;
 import com.android.wm.shell.Flags;
 
-import com.android.internal.util.voltage.cutout.CutoutFullscreenController;
+import com.android.internal.util.ethereal.cutout.CutoutFullscreenController;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -31,7 +31,7 @@ import android.os.UserManager
 import android.util.Log
 import androidx.annotation.GuardedBy
 import androidx.annotation.WorkerThread
-import com.android.internal.voltage.app.ParallelSpaceManager;
+import com.android.internal.ethereal.app.ParallelSpaceManager;
 import com.android.systemui.Dumpable
 import com.android.systemui.dump.DumpManager
 import com.android.systemui.flags.FeatureFlagsClassic

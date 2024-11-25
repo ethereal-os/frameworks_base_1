@@ -32,7 +32,7 @@ import android.util.PathParser;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.android.internal.util.voltage.VoltageUtils;
+import com.android.internal.util.ethereal.EtherealUtils;
 import com.android.systemui.Dependency;
 import com.android.systemui.res.R;
 import com.android.systemui.tuner.TunerService;
@@ -85,7 +85,7 @@ public abstract class UdfpsDrawable extends Drawable {
     }
 
     void init() {
-        if (VoltageUtils.isPackageInstalled(mContext, udfpsResourcesPackage)) {
+        if (EtherealUtils.isPackageInstalled(mContext, udfpsResourcesPackage)) {
             try {
                 PackageManager pm = mContext.getPackageManager();
                 udfpsRes = pm.getResourcesForApplication(udfpsResourcesPackage);

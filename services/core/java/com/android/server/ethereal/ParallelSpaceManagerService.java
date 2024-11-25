@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.android.server.voltage;
+package com.android.server.ethereal;
 
 import static android.os.Process.THREAD_PRIORITY_DEFAULT;
 import static android.os.UserManager.USER_TYPE_PARALLEL_DEFAULT;
 import static android.os.UserManager.USER_TYPE_PARALLEL_SHARE;
 import static android.provider.Settings.Secure.USER_SETUP_COMPLETE;
 
-import static com.android.internal.voltage.app.ParallelSpaceManager.SERVICE_NAME;
+import static com.android.internal.ethereal.app.ParallelSpaceManager.SERVICE_NAME;
 
 import android.app.ActivityManager;
 import android.app.IActivityManager;
@@ -59,7 +59,7 @@ import android.util.ArraySet;
 import android.util.Slog;
 
 import com.android.internal.annotations.GuardedBy;
-import com.android.internal.voltage.app.IParallelSpaceManager;
+import com.android.internal.ethereal.app.IParallelSpaceManager;
 import com.android.server.ServiceThread;
 import com.android.server.SystemService;
 

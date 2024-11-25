@@ -69,7 +69,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
 import com.android.internal.graphics.ColorUtils;
-import com.android.internal.voltage.app.ParallelSpaceManager;
+import com.android.internal.ethereal.app.ParallelSpaceManager;
 import com.android.systemui.CoreStartable;
 import com.android.systemui.Dumpable;
 import com.android.systemui.broadcast.BroadcastDispatcher;

@@ -139,7 +139,7 @@ import com.android.server.display.DisplayManagerService;
 import com.android.server.display.color.ColorDisplayService;
 import com.android.server.dreams.DreamManagerService;
 import com.android.server.emergency.EmergencyAffordanceService;
-import com.android.server.voltage.CustomDeviceConfigService;
+import com.android.server.ethereal.CustomDeviceConfigService;
 import com.android.server.flags.FeatureFlagsService;
 import com.android.server.gpu.GpuService;
 import com.android.server.grammaticalinflection.GrammaticalInflectionService;
@@ -242,7 +242,7 @@ import com.android.server.webkit.WebViewUpdateService;
 import com.android.server.wm.ActivityTaskManagerService;
 import com.android.server.wm.WindowManagerGlobalLock;
 import com.android.server.wm.WindowManagerService;
-import com.android.server.voltage.ParallelSpaceManagerService;
+import com.android.server.ethereal.ParallelSpaceManagerService;
 import com.android.server.custom.health.HealthInterfaceService;
 
 import dalvik.system.VMRuntime;
@@ -451,7 +451,7 @@ public final class SystemServer implements Dumpable {
     private static final String HEALTHCONNECT_MANAGER_SERVICE_CLASS =
             "com.android.server.healthconnect.HealthConnectManagerService";
     private static final String PARALLEL_SPACE_SERVICE_CLASS =
-            "com.android.server.voltage.ParallelSpaceManagerService";
+            "com.android.server.ethereal.ParallelSpaceManagerService";
 
     private static final String ROLE_SERVICE_CLASS = "com.android.role.RoleService";
     private static final String GAME_MANAGER_SERVICE_CLASS =

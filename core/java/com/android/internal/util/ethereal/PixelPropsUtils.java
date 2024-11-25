@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package com.android.internal.util.voltage;
+package com.android.internal.util.ethereal;
 
 import android.app.ActivityTaskManager;
 import android.app.Application;
@@ -38,7 +38,7 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import com.android.internal.R;
-import com.android.internal.util.voltage.VoltageUtils;
+import com.android.internal.util.ethereal.EtherealUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -63,7 +63,7 @@ public final class PixelPropsUtils {
     private static final String SPOOF_PIXEL_PROPS = "persist.sys.pphooks.enable";
 
     private static final String TAG = PixelPropsUtils.class.getSimpleName();
-    private static final String DEVICE = "ro.voltage.device";
+    private static final String DEVICE = "ro.ethereal.device";
     private static final boolean DEBUG = SystemProperties.getBoolean("persist.sys.pihooks.debug", false);
 
     private static final String sDeviceModel =
@@ -269,7 +269,7 @@ public final class PixelPropsUtils {
 
         String packageName = "com.goolag.pif";
 
-        if (!VoltageUtils.isPackageInstalled(context, packageName)) {
+        if (!EtherealUtils.isPackageInstalled(context, packageName)) {
             Log.e(TAG, "'" + packageName + "' is not installed.");
             return;
         }

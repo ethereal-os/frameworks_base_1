@@ -35,7 +35,7 @@ import com.android.internal.util.Preconditions;
 import com.android.server.LocalServices;
 import com.android.server.pm.UserManagerInternal;
 
-import com.android.server.voltage.ParallelSpaceManagerService;
+import com.android.server.ethereal.ParallelSpaceManagerService;
 
 import java.io.FileDescriptor;
 import java.util.Arrays;

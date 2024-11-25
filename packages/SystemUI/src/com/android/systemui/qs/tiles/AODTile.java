@@ -144,7 +144,7 @@ public class AODTile extends QSTileImpl<BooleanState> {
 
     @Override
     public int getMetricsCategory() {
-        return MetricsEvent.VOLTAGE;
+        return MetricsEvent.ETHEREAL;
     }
 
     private final ContentObserver mObserver = new ContentObserver(mHandler) {

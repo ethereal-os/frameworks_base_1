@@ -32,7 +32,7 @@ import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
-import com.android.internal.util.voltage.VoltageUtils;
+import com.android.internal.util.ethereal.EtherealUtils;
 
 /**
  * @hide
@@ -73,7 +73,7 @@ public class GestureNavigationSettingsObserver extends ContentObserver {
                 // Get packageName from Uri
                 String packageName = intent.getData().getSchemeSpecificPart();
                 // If the package is still installed
-                if (VoltageUtils.isPackageInstalled(context, packageName)) {
+                if (EtherealUtils.isPackageInstalled(context, packageName)) {
                     // it's an application update, we can skip the rest.
                     return;
                 }

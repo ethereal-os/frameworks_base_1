@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.android.internal.util.voltage;
+package com.android.internal.util.ethereal;
 
 import android.app.Application;
 import android.content.Context;
