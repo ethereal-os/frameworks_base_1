@@ -5022,7 +5022,7 @@
     <string name="config_mediaProjectionPermissionDialogComponent" translatable="false">com.android.systemui/com.android.systemui.mediaprojection.permission.MediaProjectionPermissionActivity</string>
 
     <!-- Corner radius of system dialogs -->
-    <dimen name="config_dialogCornerRadius">32dp</dimen>
+    <dimen name="config_dialogCornerRadius">10dp</dimen>
     <!-- Corner radius of system buttons -->
     <dimen name="config_buttonCornerRadius">@dimen/config_dialogCornerRadius</dimen>
     <!-- Corner radius for bottom sheet system dialogs -->
