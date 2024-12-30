@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 VoltageOS
+ * Copyright (C) 2024 EtherealOS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.systemui.qs.dagger.voltage
+package com.android.systemui.qs.dagger.ethereal
 
 import com.android.systemui.qs.tileimpl.QSTileImpl
 import com.android.systemui.qs.tiles.SmartPixelsTile
@@ -44,7 +44,7 @@ import dagger.multibindings.IntoMap
 import dagger.multibindings.StringKey
 
 @Module
-interface VoltageModule {
+interface EtherealModule {
 
     /** Inject CaffeineTile into tileMap in QSModule */
     @Binds
