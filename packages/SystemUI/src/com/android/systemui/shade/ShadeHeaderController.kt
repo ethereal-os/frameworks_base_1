@@ -315,9 +315,12 @@ constructor(
                 clock.onDensityOrFontScaleChanged()
             }
             
-            override fun onUiModeChanged() {
+            override fun onThemeChanged() {
+                clock.setTextAppearance(R.style.TextAppearance_QS_Status)
+                date.setTextAppearance(R.style.TextAppearance_QS_Status)
+                mShadeCarrierGroup.updateTextAppearance(R.style.TextAppearance_QS_Status_Carriers)
                 updateResources()
-            }            
+            }       
         }
 
     private val nextAlarmCallback =
@@ -603,10 +606,10 @@ constructor(
         val padding = resources.getDimensionPixelSize(R.dimen.qs_panel_padding)
         header.setPadding(padding, header.paddingTop, padding, header.paddingBottom)
         updateQQSPaddings()
-    }
-    
+
         val fillColor = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimary)
-        iconManager.setTint(fillColor)
+        val inverseColor = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimaryInverse)
+        iconManager.setTint(fillColor, inverseColor)
         val textColor = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimary)
         val colorStateList = Utils.getColorAttr(context, android.R.attr.textColorPrimary)
         if (textColor != textColorPrimary) {
@@ -614,13 +617,14 @@ constructor(
                     android.R.attr.textColorSecondary)
             textColorPrimary = textColor
             if (iconManager != null) {
-                iconManager.setTint(textColor)
+                iconManager.setTint(textColor, inverseColor)
             }
             clock.setTextColor(textColorPrimary)
             date.setTextColor(textColorPrimary)
             mShadeCarrierGroup.updateColors(textColorPrimary, colorStateList)
             batteryIcon.updateColors(textColorPrimary, textColorSecondary, textColorPrimary)
-        }    
+        } 
+    }    
 
     private fun updateQQSPaddings() {
         val clockPaddingStart =
