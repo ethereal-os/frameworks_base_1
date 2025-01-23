@@ -307,7 +307,7 @@
     <dimen name="notification_min_interaction_height">40dp</dimen>
 
     <!-- Radius for notifications corners without adjacent notifications -->
-    <dimen name="notification_corner_radius">@*android:dimen/config_dialogCornerRadius</dimen>
+    <dimen name="notification_corner_radius">10dp</dimen>
 
     <!-- Distance over which notification corner animations run, near the shelf while scrolling. -->
     <dimen name="notification_corner_animation_distance">48dp</dimen>
@@ -423,7 +423,7 @@
     <!-- Constrained size of the floating overlay preview -->
     <dimen name="overlay_x_scale">80dp</dimen>
     <!-- Radius of the chip background on floating overlay actions -->
-    <dimen name="overlay_button_corner_radius">16dp</dimen>
+    <dimen name="overlay_button_corner_radius">8dp</dimen>
     <!-- Margin between successive chips -->
     <dimen name="overlay_action_chip_margin_start">8dp</dimen>
     <dimen name="overlay_action_chip_padding_vertical">12dp</dimen>
@@ -442,8 +442,8 @@
     <dimen name="overlay_action_container_margin_horizontal">8dp</dimen>
     <dimen name="overlay_action_container_margin_bottom">6dp</dimen>
     <dimen name="overlay_bg_protection_height">242dp</dimen>
-    <dimen name="overlay_action_container_corner_radius">20dp</dimen>
-    <dimen name="overlay_action_container_padding_vertical">8dp</dimen>
+    <dimen name="overlay_action_container_corner_radius">10dp</dimen>
+    <dimen name="overlay_action_container_padding_vertical">4dp</dimen>
     <dimen name="overlay_action_container_padding_right">8dp</dimen>
     <dimen name="overlay_action_container_padding_end">8dp</dimen>
     <dimen name="overlay_dismiss_button_tappable_size">48dp</dimen>
@@ -495,7 +495,7 @@
     <!-- The size of each of the icon buttons in the QS footer -->
     <dimen name="qs_footer_action_button_size">48dp</dimen>
 
-    <dimen name="qs_footer_action_corner_radius">20dp</dimen>
+    <dimen name="qs_footer_action_corner_radius">10dp</dimen>
 
     <!-- (48dp - 40dp) / 2 -->
     <dimen name="qs_footer_action_inset">4dp</dimen>
@@ -574,11 +574,11 @@
 
     <dimen name="volume_dialog_panel_width">56dp</dimen>
 
-    <dimen name="volume_dialog_panel_width_half">28dp</dimen>
+    <dimen name="volume_dialog_panel_width_half">6dp</dimen>
 
     <dimen name="volume_dialog_slider_width">42dp</dimen>
 
-    <dimen name="volume_dialog_slider_corner_radius">21dp</dimen>
+    <dimen name="volume_dialog_slider_corner_radius">6dp</dimen>
 
     <!-- (volume_dialog_panel_width - rounded_slider_icon_size) / 2 -->
     <dimen name="volume_slider_icon_inset">11dp</dimen>
@@ -611,7 +611,7 @@
     <dimen name="volume_panel_slice_vertical_padding">8dp</dimen>
     <dimen name="volume_panel_slice_horizontal_padding">24dp</dimen>
 
-    <dimen name="volume_panel_corner_radius">52dp</dimen>
+    <dimen name="volume_panel_corner_radius">32dp</dimen>
 
     <!-- Size of each item in the ringer selector drawer. -->
     <dimen name="volume_ringer_drawer_item_size">42dp</dimen>
@@ -710,7 +710,7 @@
     <dimen name="qs_security_footer_single_line_height">48dp</dimen>
     <dimen name="qs_footers_margin_bottom">8dp</dimen>
     <dimen name="qs_security_footer_background_inset">0dp</dimen>
-    <dimen name="qs_security_footer_corner_radius">@*android:dimen/config_dialogCornerRadius</dimen>
+    <dimen name="qs_security_footer_corner_radius">12dp</dimen>
 
     <dimen name="segmented_button_spacing">0dp</dimen>
     <dimen name="borderless_button_radius">2dp</dimen>
@@ -801,7 +801,7 @@
     <!-- The amount to translate lockscreen elements on the GONE->AOD transition -->
     <dimen name="keyguard_enter_from_top_translation_y">-100dp</dimen>
 
-    <dimen name="notification_scrim_corner_radius">32dp</dimen>
+    <dimen name="notification_scrim_corner_radius">10dp</dimen>
 
     <!-- The minimum amount the user needs to swipe to go to the camera / phone. -->
     <dimen name="keyguard_min_swipe_amount">110dp</dimen>
@@ -1025,7 +1025,7 @@
     <!-- Power Menu Lite -->
     <dimen name="global_actions_button_size">96dp</dimen>
     <dimen name="global_actions_button_padding">38dp</dimen>
-    <dimen name="global_actions_corner_radius">@*android:dimen/config_dialogCornerRadius</dimen>
+    <dimen name="global_actions_corner_radius">8dp</dimen>
     <dimen name="global_actions_lite_padding">24dp</dimen>
     <dimen name="global_actions_info_margin">32dp</dimen>
 
@@ -1143,7 +1143,7 @@
     <integer name="wired_charging_keyguard_text_animation_distance">-30</integer>
 
     <!-- Logout button -->
-    <dimen name="logout_button_corner_radius">50dp</dimen>
+    <dimen name="logout_button_corner_radius">10dp</dimen>
 
     <!--  Blur radius on status bar window and power menu  -->
     <dimen name="min_window_blur_radius">1px</dimen>
@@ -1161,7 +1161,7 @@
     <!-- Icon size of Ongoing App Ops chip -->
     <dimen name="ongoing_appops_chip_icon_size">16sp</dimen>
     <!-- Radius of Ongoing App Ops chip corners -->
-    <dimen name="ongoing_appops_chip_bg_corner_radius">@*android:dimen/config_dialogCornerRadius</dimen>
+    <dimen name="ongoing_appops_chip_bg_corner_radius">28dp</dimen>
     <!--  One or two privacy items  -->
     <dimen name="ongoing_appops_chip_min_width">56dp</dimen>
     <!--  Three privacy items. This value must not be exceeded  -->
@@ -1335,7 +1335,7 @@
     <dimen name="control_list_divider">1dp</dimen>
     <dimen name="control_list_vertical_spacing">8dp</dimen>
     <dimen name="control_list_horizontal_spacing">12dp</dimen>
-    <dimen name="control_corner_radius">14dp</dimen>
+    <dimen name="control_corner_radius">10dp</dimen>
     <dimen name="control_height">104dp</dimen>
     <dimen name="control_padding">12dp</dimen>
     <dimen name="control_padding_adjustment">4dp</dimen>
@@ -1353,7 +1353,7 @@
     <item name="controls_task_view_width_percentage" translatable="false" format="float" type="dimen">1.0</item>
     <dimen name="controls_task_view_right_margin">0dp</dimen>
 
-    <dimen name="controls_panel_corner_radius">42dp</dimen>
+    <dimen name="controls_panel_corner_radius">10dp</dimen>
 
     <!-- Home Controls activity view detail panel-->
     <dimen name="controls_activity_view_corner_radius">@*android:dimen/config_bottomDialogCornerRadius</dimen>
@@ -1431,7 +1431,7 @@
     <dimen name="media_output_dialog_header_album_icon_size">72dp</dimen>
     <dimen name="media_output_dialog_header_back_icon_size">32dp</dimen>
     <dimen name="media_output_dialog_header_icon_padding">16dp</dimen>
-    <dimen name="media_output_dialog_icon_corner_radius">16dp</dimen>
+    <dimen name="media_output_dialog_icon_corner_radius">10dp</dimen>
     <dimen name="media_output_dialog_title_anim_y_delta">12.5dp</dimen>
     <dimen name="media_output_dialog_app_tier_icon_size">20dp</dimen>
     <dimen name="media_output_dialog_background_radius">16dp</dimen>
@@ -1623,7 +1623,7 @@
 
     <dimen name="rounded_slider_height">48dp</dimen>
     <!-- rounded_slider_height / 2 -->
-    <dimen name="rounded_slider_corner_radius">24dp</dimen>
+    <dimen name="rounded_slider_corner_radius">12dp</dimen>
     <dimen name="rounded_slider_icon_size">20dp</dimen>
     <!-- (rounded_slider_height - rounded_slider_icon_size) / 2 -->
     <dimen name="rounded_slider_icon_inset">14dp</dimen>
@@ -1634,7 +1634,7 @@
     <dimen name="rounded_slider_track_corner_radius">2dp</dimen>
     <dimen name="rounded_slider_background_padding">8dp</dimen>
     <!-- rounded_slider_corner_radius + rounded_slider_background_padding -->
-    <dimen name="rounded_slider_background_rounded_corner">32dp</dimen>
+    <dimen name="rounded_slider_background_rounded_corner">6dp</dimen>
 
     <!-- Location on the screen of the center of the physical power button. This is a reasonable
     default that should be overridden by device-specific overlays. -->
@@ -1671,7 +1671,7 @@
     <dimen name="card_carousel_dot_margin">4dp</dimen>
     <dimen name="min_wallet_empty_height">208dp</dimen>
     <dimen name="wallet_card_border_width">1dp</dimen>
-    <dimen name="wallet_empty_state_corner_radius">24dp</dimen>
+    <dimen name="wallet_empty_state_corner_radius">10dp</dimen>
     <dimen name="wallet_tile_card_view_height">32dp</dimen>
     <dimen name="wallet_tile_card_view_width">50dp</dimen>
     <dimen name="wallet_button_horizontal_padding">24dp</dimen>
@@ -1682,7 +1682,7 @@
     <dimen name="ongoing_call_chip_icon_size">16dp</dimen>
     <!-- The padding between the icon and the text. -->
     <dimen name="ongoing_call_chip_icon_text_padding">4dp</dimen>
-    <dimen name="ongoing_call_chip_corner_radius">@*android:dimen/config_dialogCornerRadius</dimen>
+    <dimen name="ongoing_call_chip_corner_radius">16dp</dimen>
 
     <!-- Status bar user chip -->
     <dimen name="status_bar_user_chip_avatar_size">16dp</dimen>
@@ -1705,7 +1705,7 @@
     <dimen name="signal_strength_icon_size">24dp</dimen>
 
     <!-- Internet dialog related dimensions -->
-    <dimen name="internet_dialog_corner_radius">@*android:dimen/config_dialogCornerRadius</dimen>
+    <dimen name="internet_dialog_corner_radius">24dp</dimen>
     <!-- Width of progress bar -->
     <dimen name="internet_dialog_progress_bar_width">152dp</dimen>
     <!-- End margin of network layout -->
@@ -1714,7 +1714,7 @@
     <!-- Minimum width of switch -->
     <dimen name="settingslib_min_switch_width">52dp</dimen>
     <!-- Radius of switch bar -->
-    <dimen name="settingslib_switch_bar_radius">35dp</dimen>
+    <dimen name="settingslib_switch_bar_radius">10dp</dimen>
     <!-- Margin of switch thumb -->
     <dimen name="settingslib_switch_thumb_margin">4dp</dimen>
     <!-- Size of switch thumb -->
@@ -1724,7 +1724,7 @@
     <!-- Height of switch track -->
     <dimen name="settingslib_switch_track_height">28dp</dimen>
     <!-- Radius of switch track -->
-    <dimen name="settingslib_switch_track_radius">35dp</dimen>
+    <dimen name="settingslib_switch_track_radius">10dp</dimen>
 
     <!-- Bluetooth dialog related dimensions -->
     <dimen name="bluetooth_dialog_layout_margin">16dp</dimen>
@@ -1806,7 +1806,7 @@
     <dimen name="dream_overlay_anim_blur_radius">50dp</dimen>
     <dimen name="dream_overlay_bottom_affordance_height">64dp</dimen>
     <dimen name="dream_overlay_bottom_affordance_width">64dp</dimen>
-    <dimen name="dream_overlay_bottom_affordance_radius">32dp</dimen>
+    <dimen name="dream_overlay_bottom_affordance_radius">10dp</dimen>
     <dimen name="dream_overlay_bottom_affordance_key_text_shadow_dx">0.5dp</dimen>
     <dimen name="dream_overlay_bottom_affordance_key_text_shadow_dy">0.5dp</dimen>
     <dimen name="dream_overlay_bottom_affordance_key_text_shadow_radius">1dp</dimen>
