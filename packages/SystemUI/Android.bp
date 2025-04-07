@@ -164,6 +164,7 @@ android_library {
         "androidx.compose.material_material-icons-extended",
         "androidx.activity_activity-compose",
         "androidx.compose.animation_animation-graphics",
+        "FadingEdgeLayoutLib",
     ],
     libs: [
         "keepanno-annotations",
