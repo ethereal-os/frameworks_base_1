@@ -23,8 +23,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.android.systemui.Dependency;
-import com.android.systemui.R;
-import com.android.systemui.statusbar.phone.StatusBarIconController;
+import com.android.systemui.res.R;
 import com.android.systemui.statusbar.policy.Clock;
 import com.android.systemui.tuner.TunerService;
 
@@ -42,6 +41,8 @@ public class ClockController implements TunerService.Tunable {
 
     private Context mContext;
     private Clock mActiveClock, mCenterClock, mLeftClock, mRightClock;
+    
+    private final TunerService mTunerService;
 
     private int mClockPosition = CLOCK_POSITION_LEFT;
 
@@ -54,9 +55,13 @@ public class ClockController implements TunerService.Tunable {
 
         mClockPosition = Settings.System.getIntForUser(mContext.getContentResolver(),
                     STATUS_BAR_CLOCK, CLOCK_POSITION_LEFT, UserHandle.USER_CURRENT);
-        updateActiveClock();
+        mContext.getMainExecutor().execute(() -> {
+            updateActiveClock();
+        });
+        
+        mTunerService = Dependency.get(TunerService.class);
 
-        Dependency.get(TunerService.class).addTunable(this,
+        mTunerService.addTunable(this,
                 STATUS_BAR_CLOCK);
     }
 
@@ -99,11 +104,17 @@ public class ClockController implements TunerService.Tunable {
         switch (key) {
             case STATUS_BAR_CLOCK:
                 mClockPosition = TunerService.parseInteger(newValue, CLOCK_POSITION_LEFT);
-                updateActiveClock();
+                mContext.getMainExecutor().execute(() -> {
+                    updateActiveClock();
+                });
                 break;
             default:
                 break;
         }
+    }
+    
+    public void removeTunable() {
+        mTunerService.removeTunable(this);
     }
 
     public void onDensityOrFontScaleChanged() {
