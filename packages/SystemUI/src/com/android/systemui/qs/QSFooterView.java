@@ -45,9 +45,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import com.android.settingslib.development.DevelopmentSettingsEnabler;
+import com.android.settingslib.net.DataUsageController;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.res.R;
-import com.android.settingslib.net.DataUsageController;
 
 /**
  * Footer of expanded Quick Settings, tiles page indicator, (optionally) build number and
@@ -118,8 +118,10 @@ public class QSFooterView extends FrameLayout {
     }
     
     private void setUsageTextDebounced() {
-        mHandler.removeCallbacks(mSetUsageTextRunnable);
-        mHandler.postDelayed(mSetUsageTextRunnable, DEBOUNCE_DELAY_MS);
+        if (mShouldShowDataUsage) {
+            mHandler.removeCallbacks(mSetUsageTextRunnable);
+            mHandler.postDelayed(mSetUsageTextRunnable, DEBOUNCE_DELAY_MS);
+        }
     }
 
     private void setUsageText() {

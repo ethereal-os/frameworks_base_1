@@ -40,8 +40,8 @@ import com.android.systemui.crdroid.header.StatusBarHeaderMachine;
 import com.android.systemui.util.LargeScreenUtils;
 
 import com.bosphere.fadingedgelayout.FadingEdgeLayout;
- 
- import java.lang.Math;
+
+import java.lang.Math;
 
 /**
  * View that contains the top-most bits of the QS panel (primarily the status bar with date, time,

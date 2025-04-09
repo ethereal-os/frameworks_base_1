@@ -19,6 +19,7 @@ package com.android.systemui.qs;
 import static com.android.systemui.util.Utils.useQsMediaPlayer;
 
 import android.annotation.NonNull;
+import android.animation.ObjectAnimator;
 import android.annotation.Nullable;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -35,6 +36,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 
 import androidx.annotation.VisibleForTesting;
@@ -43,6 +52,7 @@ import com.android.internal.logging.UiEventLogger;
 import com.android.internal.widget.RemeasuringLinearLayout;
 import com.android.systemui.Dependency;
 import com.android.systemui.plugins.qs.QSTile;
+import com.android.systemui.plugins.qs.QSTileView;
 import com.android.systemui.qs.logging.QSLogger;
 import com.android.systemui.res.R;
 import com.android.systemui.settings.brightness.BrightnessSliderController;
@@ -61,6 +71,30 @@ public class QSPanel extends LinearLayout implements Tunable {
             Settings.Secure.QS_SHOW_BRIGHTNESS_SLIDER;
     public static final String QS_BRIGHTNESS_SLIDER_POSITION =
             Settings.Secure.QS_BRIGHTNESS_SLIDER_POSITION;
+    public static final String QS_TILE_ANIMATION_STYLE =
+            "system:" + Settings.System.QS_TILE_ANIMATION_STYLE;
+    public static final String QS_TILE_ANIMATION_DURATION =
+            "system:" + Settings.System.QS_TILE_ANIMATION_DURATION;
+    public static final String QS_TILE_ANIMATION_INTERPOLATOR =
+            "system:" + Settings.System.QS_TILE_ANIMATION_INTERPOLATOR;
+    public static final String QS_TILE_VERTICAL_LAYOUT =
+            "system:" + Settings.System.QS_TILE_VERTICAL_LAYOUT;
+    public static final String QS_TILE_LABEL_HIDE =
+            "system:" + Settings.System.QS_TILE_LABEL_HIDE;
+    public static final String QS_TILE_LABEL_SIZE =
+            "system:" + Settings.System.QS_TILE_LABEL_SIZE;
+    public static final String QS_LAYOUT_COLUMNS =
+            "system:" + Settings.System.QS_LAYOUT_COLUMNS;
+    public static final String QS_LAYOUT_COLUMNS_LANDSCAPE =
+            "system:" + Settings.System.QS_LAYOUT_COLUMNS_LANDSCAPE;
+    public static final String QQS_LAYOUT_ROWS =
+            "system:" + Settings.System.QQS_LAYOUT_ROWS;
+    public static final String QQS_LAYOUT_ROWS_LANDSCAPE =
+            "system:" + Settings.System.QQS_LAYOUT_ROWS_LANDSCAPE;
+    public static final String QS_LAYOUT_ROWS =
+            "system:" + Settings.System.QS_LAYOUT_ROWS;
+    public static final String QS_LAYOUT_ROWS_LANDSCAPE =
+            "system:" + Settings.System.QS_LAYOUT_ROWS_LANDSCAPE;
 
     private static final String TAG = "QSPanel";
 
@@ -125,6 +159,10 @@ public class QSPanel extends LinearLayout implements Tunable {
     private boolean mCanCollapse = true;
 
     private boolean mSceneContainerEnabled;
+
+    protected int mAnimStyle;
+    protected int mAnimDuration;
+    protected int mInterpolatorType;
 
     public QSPanel(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -231,7 +269,8 @@ public class QSPanel extends LinearLayout implements Tunable {
             } else {
                 lp.topMargin = mContext.getResources()
                         .getDimensionPixelSize(R.dimen.qs_bottom_brightness_margin_top);
-                lp.bottomMargin = 0;
+                lp.bottomMargin = mContext.getResources()
+                        .getDimensionPixelSize(R.dimen.qs_bottom_brightness_margin_bottom);
             }
             mBrightnessView.setLayoutParams(lp);
         }
@@ -319,7 +358,7 @@ public class QSPanel extends LinearLayout implements Tunable {
     }
 
     private void updateViewPositions() {
-        if (mChildrenLayoutTop == null || mChildrenLayoutTop.isEmpty()) {
+        if (mChildrenLayoutTop == null || mChildrenLayoutTop.isEmpty() || mTileLayout == null) {
             return;
         }
         // Adjust view positions based on tile squishing
@@ -377,6 +416,26 @@ public class QSPanel extends LinearLayout implements Tunable {
                     mAutoBrightnessView.setVisibility(mIsAutomaticBrightnessAvailable &&
                             TunerService.parseIntegerSwitch(newValue, true) ? View.VISIBLE : View.GONE);
                 }
+                break;
+            case QS_TILE_ANIMATION_STYLE:
+                mAnimStyle =
+                       TunerService.parseInteger(newValue, 0);
+                break;
+            case QS_TILE_ANIMATION_DURATION:
+                mAnimDuration =
+                       TunerService.parseInteger(newValue, 1);
+                break;
+            case QS_TILE_ANIMATION_INTERPOLATOR:
+                mInterpolatorType =
+                       TunerService.parseInteger(newValue, 0);
+                break;
+            case QS_LAYOUT_COLUMNS:
+            case QS_LAYOUT_COLUMNS_LANDSCAPE:
+            case QS_LAYOUT_ROWS:
+            case QS_LAYOUT_ROWS_LANDSCAPE:
+            case QQS_LAYOUT_ROWS:
+            case QQS_LAYOUT_ROWS_LANDSCAPE:
+                needsDynamicRowsAndColumns();
                 break;
             default:
                 break;
@@ -450,6 +509,7 @@ public class QSPanel extends LinearLayout implements Tunable {
         super.onConfigurationChanged(newConfig);
         mOnConfigurationChangedListeners.forEach(
                 listener -> listener.onConfigurationChange(newConfig));
+        needsDynamicRowsAndColumns();
     }
 
     @Override
@@ -483,8 +543,14 @@ public class QSPanel extends LinearLayout implements Tunable {
         return false;
     }
 
-    private boolean needsDynamicRowsAndColumns() {
-        return true;
+    public void needsDynamicRowsAndColumns() {
+        if (mTileLayout != null) {
+            boolean rowUpdate = mTileLayout.setMinRows(mTileLayout.getResourceRows());
+            boolean colUpdate = mTileLayout.setMaxColumns(mTileLayout.getResourceColumns());
+            if (rowUpdate || colUpdate) {
+                mTileLayout.updateSettings();
+            }
+        }
     }
 
     private void switchAllContentToParent(ViewGroup parent, QSTileLayout newLayout) {
@@ -604,6 +670,7 @@ public class QSPanel extends LinearLayout implements Tunable {
 
         if (mTileLayout != null) {
             mTileLayout.addTile(tileRecord);
+            tileClickListener(tileRecord.tile, tileRecord.tileView);
         }
     }
 
@@ -680,10 +747,7 @@ public class QSPanel extends LinearLayout implements Tunable {
                 mBrightnessRunnable.run();
             }
             reAttachMediaHost(mediaHostView, horizontal);
-            if (needsDynamicRowsAndColumns()) {
-                mTileLayout.setMinRows(horizontal ? 2 : 1);
-                mTileLayout.setMaxColumns(horizontal ? 2 : 4);
-            }
+            needsDynamicRowsAndColumns();
             updateMargins(mediaHostView);
             if (mHorizontalLinearLayout == null) return;
             mHorizontalLinearLayout.setVisibility(horizontal ? View.VISIBLE : View.GONE);
@@ -694,6 +758,16 @@ public class QSPanel extends LinearLayout implements Tunable {
         updateMediaHostContentMargins(mediaHostView);
         updateHorizontalLinearLayoutMargins();
         updatePadding();
+    }
+
+    protected void updateBrightnessSliderPosition() {
+        if (mBrightnessView == null) return;
+        ViewGroup newParent = mUsingHorizontalLayout ? mHorizontalContentContainer : this;
+        switchAllContentToParent(newParent, mTileLayout);
+        if (mBrightnessRunnable != null) {
+            updateResources();
+            mBrightnessRunnable.run();
+        }
     }
 
     /**
@@ -738,16 +812,6 @@ public class QSPanel extends LinearLayout implements Tunable {
      */
     public void setCanCollapse(boolean canCollapse) {
         mCanCollapse = canCollapse;
-    }
-
-    protected void updateBrightnessSliderPosition() {
-        if (mBrightnessView == null) return;
-        ViewGroup newParent = mUsingHorizontalLayout ? mHorizontalContentContainer : this;
-        switchAllContentToParent(newParent, mTileLayout);
-        if (mBrightnessRunnable != null) {
-            updateResources();
-            mBrightnessRunnable.run();
-        }
     }
 
     public interface QSTileLayout {
@@ -811,6 +875,12 @@ public class QSPanel extends LinearLayout implements Tunable {
         int getNumVisibleTiles();
 
         default void setLogger(QSLogger qsLogger) { }
+
+        int getResourceColumns();
+
+        int getResourceRows();
+
+        void updateSettings();
     }
 
     interface OnConfigurationChangedListener {
@@ -829,7 +899,8 @@ public class QSPanel extends LinearLayout implements Tunable {
             if (currentParent != null) {
                 currentParent.removeView(child);
             }
-            parent.addView(child, index);
+            int validIndex = Math.min(index, parent.getChildCount());
+            parent.addView(child, validIndex);
             return;
         }
         // Same parent, we are just changing indices
@@ -839,6 +910,65 @@ public class QSPanel extends LinearLayout implements Tunable {
             return;
         }
         parent.removeView(child);
-        parent.addView(child, index);
+        int validIndex = Math.min(index, parent.getChildCount());
+        parent.addView(child, validIndex);
+    }
+
+    private void setAnimationTile(QSTileView v) {
+        ObjectAnimator animTile = null;
+
+        switch (mAnimStyle) {
+            case 1:
+                animTile = ObjectAnimator.ofFloat(v, "rotation", 0f, 360f);
+                break;
+            case 2:
+                animTile = ObjectAnimator.ofFloat(v, "rotationX", 0f, 360f);
+                break;
+            case 3:
+                animTile = ObjectAnimator.ofFloat(v, "rotationY", 0f, 360f);
+                break;
+            default:
+                return;
+        }
+
+        switch (mInterpolatorType) {
+            case 0:
+                animTile.setInterpolator(new LinearInterpolator());
+                break;
+            case 1:
+                animTile.setInterpolator(new AccelerateInterpolator());
+                break;
+            case 2:
+                animTile.setInterpolator(new DecelerateInterpolator());
+                break;
+            case 3:
+                animTile.setInterpolator(new AccelerateDecelerateInterpolator());
+                break;
+            case 4:
+                animTile.setInterpolator(new BounceInterpolator());
+                break;
+            case 5:
+                animTile.setInterpolator(new OvershootInterpolator());
+                break;
+            case 6:
+                animTile.setInterpolator(new AnticipateInterpolator());
+                break;
+            case 7:
+                animTile.setInterpolator(new AnticipateOvershootInterpolator());
+                break;
+            default:
+                break;
+        }
+        animTile.setDuration(mAnimDuration * 1000);
+        animTile.start();
+    }
+
+    private void tileClickListener(QSTile t, QSTileView v) {
+        if (mTileLayout != null) {
+            v.setOnClickListener(view -> {
+                    t.click(view);
+                    setAnimationTile(v);
+            });
+        }
     }
 }
