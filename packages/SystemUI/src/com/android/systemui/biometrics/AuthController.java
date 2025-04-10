@@ -26,6 +26,7 @@ import android.app.ActivityManager;
 import android.app.ActivityTaskManager;
 import android.app.TaskStackListener;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -191,11 +192,11 @@ public class AuthController implements
     @VisibleForTesting
     final TaskStackListener mTaskStackListener = new TaskStackListener() {
         @Override
-        public void onTaskStackChanged() {
-            if (!isOwnerInForeground()) {
-                mHandler.post(AuthController.this::cancelIfOwnerIsNotInForeground);
-            }
-        }
+	public void onTaskStackChanged() {
+	    if (isOwnerInBackground()) {
+		        mHandler.post(AuthController.this::cancelIfOwnerIsNotInForeground);
+	    }
+	}
     };
 
     @VisibleForTesting
@@ -232,21 +233,40 @@ public class AuthController implements
         }
     }
 
-    private boolean isOwnerInForeground() {
+    private boolean isOwnerInBackground() {
         if (mCurrentDialog != null) {
             final String clientPackage = mCurrentDialog.getOpPackageName();
             final List<ActivityManager.RunningTaskInfo> runningTasks =
                     mActivityTaskManager.getTasks(1);
-            if (!runningTasks.isEmpty()) {
-                final String topPackage = runningTasks.get(0).topActivity.getPackageName();
-                if (!topPackage.contentEquals(clientPackage)
-                        && !Utils.isSystem(mContext, clientPackage)) {
-                    Log.w(TAG, "Evicting client due to: " + topPackage);
-                    return false;
-                }
+            if (runningTasks == null || runningTasks.isEmpty()) {
+                Log.w(TAG, "No running tasks reported");
+                return false;
             }
+
+            final boolean isSystemApp = Utils.isSystem(mContext, clientPackage);
+
+            final ComponentName topActivity = runningTasks.get(0).topActivity;
+            final String topPackage = topActivity.getPackageName();
+            final boolean topPackageEqualsToClient =
+                    topPackage == null
+                            || topPackage.contentEquals(clientPackage);
+
+            final String clientClassNameForCDCA =
+                    mCurrentDialog.getClassNameIfItIsConfirmDeviceCredentialActivity();
+            final boolean isClientCDCA = clientClassNameForCDCA != null;
+            final String topClassName = topActivity.getClassName();
+            final boolean isCDCAWithWrongTopClass =
+                    isClientCDCA
+                            && !(topClassName == null
+                            || topClassName.contentEquals(clientClassNameForCDCA));
+
+            final boolean isInBackground =
+                    !(isSystemApp || topPackageEqualsToClient) || isCDCAWithWrongTopClass;
+
+            Log.w(TAG, "isInBackground " + isInBackground);
+            return isInBackground;
         }
-        return true;
+        return false;
     }
 
     private void cancelIfOwnerIsNotInForeground() {
@@ -1260,7 +1280,7 @@ public class AuthController implements
         }
         mCurrentDialog = newDialog;
 
-        if (!promptInfo.isAllowBackgroundAuthentication() && !isOwnerInForeground()) {
+        if (!promptInfo.isAllowBackgroundAuthentication() && isOwnerInBackground()) {
             cancelIfOwnerIsNotInForeground();
         } else {
             mCurrentDialog.show(mWindowManager);

@@ -56,6 +56,7 @@ public class PromptInfo implements Parcelable {
     private boolean mIsForLegacyFingerprintManager = false;
     private boolean mShowEmergencyCallButton = false;
     private boolean mUseParentProfileForDeviceCredential = false;
+    private String mClassNameIfItIsConfirmDeviceCredentialActivity = null;
 
     public PromptInfo() {
 
@@ -87,6 +88,7 @@ public class PromptInfo implements Parcelable {
         mIsForLegacyFingerprintManager = in.readBoolean();
         mShowEmergencyCallButton = in.readBoolean();
         mUseParentProfileForDeviceCredential = in.readBoolean();
+        mClassNameIfItIsConfirmDeviceCredentialActivity = in.readString();
     }
 
     public static final Creator<PromptInfo> CREATOR = new Creator<PromptInfo>() {
@@ -132,6 +134,7 @@ public class PromptInfo implements Parcelable {
         dest.writeBoolean(mIsForLegacyFingerprintManager);
         dest.writeBoolean(mShowEmergencyCallButton);
         dest.writeBoolean(mUseParentProfileForDeviceCredential);
+        dest.writeString(mClassNameIfItIsConfirmDeviceCredentialActivity);
     }
 
     // LINT.IfChange
@@ -148,6 +151,8 @@ public class PromptInfo implements Parcelable {
             return true;
         } else if (mIgnoreEnrollmentState) {
             return true;
+        } else if (mClassNameIfItIsConfirmDeviceCredentialActivity != null) {
+            return true;            
         }
         return false;
     }
@@ -287,6 +292,13 @@ public class PromptInfo implements Parcelable {
         mAllowedSensorIds.add(sensorId);
     }
 
+    /**
+     * Set the class name of ConfirmDeviceCredentialActivity.
+     */
+    void setClassNameIfItIsConfirmDeviceCredentialActivity(String className) {
+        mClassNameIfItIsConfirmDeviceCredentialActivity = className;
+    }
+
     public void setShowEmergencyCallButton(boolean showEmergencyCallButton) {
         mShowEmergencyCallButton = showEmergencyCallButton;
     }
@@ -398,6 +410,14 @@ public class PromptInfo implements Parcelable {
     public boolean isForLegacyFingerprintManager() {
         return mIsForLegacyFingerprintManager;
     }
+
+    /**
+     * Get the class name of ConfirmDeviceCredentialActivity. Returns null if the direct caller is
+     * not ConfirmDeviceCredentialActivity.
+     */
+    public String getClassNameIfItIsConfirmDeviceCredentialActivity() {
+        return mClassNameIfItIsConfirmDeviceCredentialActivity;
+    }    
 
     public boolean isShowEmergencyCallButton() {
         return mShowEmergencyCallButton;

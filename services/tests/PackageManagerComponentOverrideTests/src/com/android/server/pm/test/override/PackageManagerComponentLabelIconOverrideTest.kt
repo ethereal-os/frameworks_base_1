@@ -57,6 +57,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.any
 import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.doReturn
@@ -383,7 +384,11 @@ class PackageManagerComponentLabelIconOverrideTest {
                     android.Manifest.permission.INTERACT_ACROSS_USERS_FULL)) {
                 PackageManager.PERMISSION_GRANTED
             }
-        }
+            whenever(this.checkPermission(
+                eq(android.Manifest.permission.INTERACT_ACROSS_USERS_FULL), anyInt(), anyInt())) {
+                PackageManager.PERMISSION_GRANTED
+            } 
+        }                   
         val mockSharedLibrariesImpl: SharedLibrariesImpl = mock {
             whenever(this.snapshot()) { this@mock }
         }

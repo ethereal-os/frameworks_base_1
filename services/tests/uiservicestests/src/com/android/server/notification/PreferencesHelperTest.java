@@ -41,6 +41,9 @@ import static android.app.NotificationManager.IMPORTANCE_MAX;
 import static android.app.NotificationManager.IMPORTANCE_NONE;
 import static android.app.NotificationManager.IMPORTANCE_UNSPECIFIED;
 import static android.app.NotificationManager.VISIBILITY_NO_OVERRIDE;
+import static android.content.ContentResolver.SCHEME_ANDROID_RESOURCE;
+import static android.content.ContentResolver.SCHEME_CONTENT;
+import static android.content.ContentResolver.SCHEME_FILE;
 import static android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION;
 import static android.media.AudioAttributes.USAGE_NOTIFICATION;
 import static android.os.UserHandle.USER_ALL;
@@ -73,6 +76,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -2722,6 +2726,96 @@ public class PreferencesHelperTest extends UiServiceTestCase {
     }
 
     @Test
+    public void testCreateChannel_noSoundUriPermission_contentSchemeVerified() {
+        final Uri sound = Uri.parse(SCHEME_CONTENT + "://media/test/sound/uri");
+
+       doThrow(new SecurityException("no access")).when(mUgmInternal)
+               .checkGrantUriPermission(eq(UID_N_MR1), any(), eq(sound),
+                anyInt(), eq(Process.myUserHandle().getIdentifier()));
+
+        mBinderService.updateNotificationChannelFromPrivilegedListener(
+                null, mPkg, Process.myUserHandle(), updatedNotificationChannel);
+
+        verify(mPreferencesHelper, times(1)).updateNotificationChannel(
+                anyString(), anyInt(), any(), anyBoolean(),  anyInt(), anyBoolean());
+
+        verify(mListeners, never()).notifyNotificationChannelChanged(eq(mPkg),
+                eq(Process.myUserHandle()), eq(mTestNotificationChannel),
+                eq(NotificationListenerService.NOTIFICATION_CHANNEL_OR_GROUP_UPDATED));
+    }
+
+    @Test
+    public void
+        testUpdateNotificationChannelFromPrivilegedListener_oldSoundNoUriPerm_newSoundHasUriPerm()
+            throws Exception {
+        mService.setPreferencesHelper(mPreferencesHelper);
+        when(mCompanionMgr.getAssociations(mPkg, mUserId))
+                .thenReturn(singletonList(mock(AssociationInfo.class)));
+        when(mPreferencesHelper.getNotificationChannel(eq(mPkg), anyInt(),
+                eq(mTestNotificationChannel.getId()), anyBoolean()))
+                .thenReturn(mTestNotificationChannel);
+
+        // Missing Uri permissions for the old channel sound
+        final Uri oldSoundUri = Settings.System.DEFAULT_NOTIFICATION_URI;
+        doThrow(new SecurityException("no access")).when(mUgmInternal)
+                .checkGrantUriPermission(eq(Process.myUid()), any(), eq(oldSoundUri),
+                anyInt(), eq(Process.myUserHandle().getIdentifier()));
+
+        // Has Uri permissions for the old channel sound
+        final Uri newSoundUri = Uri.parse("content://media/test/sound/uri");
+        final NotificationChannel updatedNotificationChannel = new NotificationChannel(
+                TEST_CHANNEL_ID, TEST_CHANNEL_ID, IMPORTANCE_DEFAULT);
+        updatedNotificationChannel.setSound(newSoundUri,
+                updatedNotificationChannel.getAudioAttributes());
+
+        final NotificationChannel channel = new NotificationChannel("id2", "name2",
+                NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setSound(sound, mAudioAttributes);
+
+        assertThrows(SecurityException.class,
+                () -> mHelper.createNotificationChannel(PKG_N_MR1, UID_N_MR1, channel,
+                    true, false, UID_N_MR1, false));
+        assertThat(mHelper.getNotificationChannel(PKG_N_MR1, UID_N_MR1, channel.getId(), true))
+                .isNull();
+    }
+
+    @Test
+    public void testCreateChannel_noSoundUriPermission_fileSchemaIgnored() {
+        final Uri sound = Uri.parse(SCHEME_FILE + "://path/sound");
+
+        doThrow(new SecurityException("no access")).when(mUgmInternal)
+                .checkGrantUriPermission(eq(UID_N_MR1), any(), any(),
+                    anyInt(), eq(Process.myUserHandle().getIdentifier()));
+
+        final NotificationChannel channel = new NotificationChannel("id2", "name2",
+                NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setSound(sound, mAudioAttributes);
+
+        mHelper.createNotificationChannel(PKG_N_MR1, UID_N_MR1, channel, true, false, UID_N_MR1,
+                false);
+        assertThat(mHelper.getNotificationChannel(PKG_N_MR1, UID_N_MR1, channel.getId(), true)
+                .getSound()).isEqualTo(sound);
+    }
+
+    @Test
+    public void testCreateChannel_noSoundUriPermission_resourceSchemaIgnored() {
+        final Uri sound = Uri.parse(SCHEME_ANDROID_RESOURCE + "://resId/sound");
+
+        doThrow(new SecurityException("no access")).when(mUgmInternal)
+                .checkGrantUriPermission(eq(UID_N_MR1), any(), any(),
+                    anyInt(), eq(Process.myUserHandle().getIdentifier()));
+
+        final NotificationChannel channel = new NotificationChannel("id2", "name2",
+                NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setSound(sound, mAudioAttributes);
+
+        mHelper.createNotificationChannel(PKG_N_MR1, UID_N_MR1, channel, true, false, UID_N_MR1,
+                false);
+        assertThat(mHelper.getNotificationChannel(PKG_N_MR1, UID_N_MR1, channel.getId(), true)
+                .getSound()).isEqualTo(sound);
+    }
+
+    @Test    
     public void testPermanentlyDeleteChannels() throws Exception {
         NotificationChannel channel1 =
                 new NotificationChannel("id1", "name1", NotificationManager.IMPORTANCE_HIGH);
