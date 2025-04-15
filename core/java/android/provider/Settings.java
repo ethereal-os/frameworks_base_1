@@ -6854,6 +6854,12 @@ public final class Settings {
                 "notification_guts_kill_app_button";
 
         /**
+         * Navbar style
+         * @hide
+         */
+        public static final String NAVBAR_STYLE = "navbar_style";
+
+        /**
          * Whether keyguard will rotate
          * 0 = false, 1 = true
           * @hide
