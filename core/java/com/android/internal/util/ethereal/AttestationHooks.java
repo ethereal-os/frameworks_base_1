@@ -39,7 +39,7 @@ import java.util.Map;
 public final class AttestationHooks {
 
     private static final String TAG = "AttestationHooks";
-    private static final String DEVICE = "ro.voltage.device";
+    private static final String DEVICE = "ro.ethereal.device";
     private static final boolean DEBUG = false;
 
     private static final String PACKAGE_GPHOTOS = "com.google.android.apps.photos";
