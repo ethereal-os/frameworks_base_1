@@ -180,22 +180,24 @@ public final class PixelPropsUtils {
         propsToChangeGeneric.put("TAGS", "release-keys");
         propsToChangeRecentPixel = new HashMap<>();
         propsToChangeRecentPixel.put("BRAND", "google");
+        propsToChangeRecentPixel.put("BOARD", "komodo");
         propsToChangeRecentPixel.put("MANUFACTURER", "Google");
         propsToChangeRecentPixel.put("DEVICE", "komodo");
         propsToChangeRecentPixel.put("PRODUCT", "komodo");
         propsToChangeRecentPixel.put("HARDWARE", "komodo");
         propsToChangeRecentPixel.put("MODEL", "Pixel 9 Pro XL");
-        propsToChangeRecentPixel.put("ID", "AD1A.240905.004");
-        propsToChangeRecentPixel.put("FINGERPRINT", "google/komodo/komodo:14/AD1A.240905.004/12196292:user/release-keys");
+        propsToChangeRecentPixel.put("ID", "BP1A.250405.007");
+        propsToChangeRecentPixel.put("FINGERPRINT", "google/komodo/komodo:15/BP1A.250405.007/13240079:user/release-keys");
         propsToChangePixelTablet = new HashMap<>();
         propsToChangePixelTablet.put("BRAND", "google");
+        propsToChangePixelTablet.put("BOARD", "tangorpro");
         propsToChangePixelTablet.put("MANUFACTURER", "Google");
         propsToChangePixelTablet.put("DEVICE", "tangorpro");
         propsToChangePixelTablet.put("PRODUCT", "tangorpro");
         propsToChangePixelTablet.put("HARDWARE", "tangorpro");
         propsToChangePixelTablet.put("MODEL", "Pixel Tablet");
-        propsToChangePixelTablet.put("ID", "AP2A.240905.003");
-        propsToChangePixelTablet.put("FINGERPRINT", "google/tangorpro/tangorpro:14/AP2A.240905.003/12231197:user/release-keys");
+        propsToChangePixelTablet.put("ID", "BP1A.250405.007");
+        propsToChangePixelTablet.put("FINGERPRINT", "google/tangorpro/tangorpro:15/BP1A.250405.007/13240079:user/release-keys");
         propsToChangePixel5a = new HashMap<>();
         propsToChangePixel5a.put("BRAND", "google");
         propsToChangePixel5a.put("MANUFACTURER", "Google");
@@ -203,8 +205,8 @@ public final class PixelPropsUtils {
         propsToChangePixel5a.put("PRODUCT", "barbet");
         propsToChangePixel5a.put("HARDWARE", "barbet");
         propsToChangePixel5a.put("MODEL", "Pixel 5a");
-        propsToChangePixel5a.put("ID", "AP2A.240805.005");
-        propsToChangePixel5a.put("FINGERPRINT", "google/barbet/barbet:14/AP2A.240805.005/12025142:user/release-keys");
+        propsToChangePixel5a.put("ID", "AP2A.240805.005.S4");
+        propsToChangePixel5a.put("FINGERPRINT", "google/barbet/barbet:14/AP2A.240805.005.S4/12281092:user/release-keys");
     }
 
     public static String getBuildID(String fingerprint) {
