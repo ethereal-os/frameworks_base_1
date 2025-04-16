@@ -13503,6 +13503,12 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_PULSE_ENABLED = "lockscreen_pulse_enabled";
+        
+        /**
+         * Whether to use black theme for dark mode
+         * @hide
+         */
+        public static final String BERRY_BLACK_THEME = "berry_black_theme";
 
         /**
          * Pulse navbar music visualizer color type
