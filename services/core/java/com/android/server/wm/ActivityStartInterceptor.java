@@ -25,6 +25,9 @@ import static android.app.PendingIntent.FLAG_ONE_SHOT;
 import static android.app.admin.DevicePolicyManager.EXTRA_RESTRICTION;
 import static android.app.admin.DevicePolicyManager.POLICY_SUSPEND_PACKAGES;
 import static android.content.Context.KEYGUARD_SERVICE;
+import static android.content.Intent.ACTION_MAIN;
+import static android.content.Intent.CATEGORY_HOME;
+import static android.content.Intent.CATEGORY_SECONDARY_HOME;
 import static android.content.Intent.EXTRA_INTENT;
 import static android.content.Intent.EXTRA_PACKAGE_NAME;
 import static android.content.Intent.EXTRA_TASK_ID;
@@ -40,6 +43,7 @@ import android.app.ActivityOptions;
 import android.app.KeyguardManager;
 import android.app.TaskInfo;
 import android.app.admin.DevicePolicyManagerInternal;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.IIntentSender;
 import android.content.Intent;
@@ -56,6 +60,7 @@ import android.os.RemoteException;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.util.Pair;
+import android.util.Slog;
 import android.util.SparseArray;
 
 import com.android.internal.annotations.VisibleForTesting;
@@ -76,6 +81,7 @@ import com.android.server.wm.ActivityInterceptorCallback.ActivityInterceptResult
  * is no guarantee that other system services are already present.
  */
 class ActivityStartInterceptor {
+    private static final String TAG = "ActivityStartInterceptor";
 
     private final ActivityTaskManagerService mService;
     private final ActivityTaskSupervisor mSupervisor;
@@ -110,6 +116,11 @@ class ActivityStartInterceptor {
     Task mInTask;
     TaskFragment mInTaskFragment;
     ActivityOptions mActivityOptions;
+
+    /**
+     * Whether the component is specified originally in the given Intent.
+     */
+    boolean mComponentSpecified;
 
     /*
      * Note that this is just a hint of what the launch display area will be as it is
@@ -163,7 +174,6 @@ class ActivityStartInterceptor {
         return new IntentSender(target);
     }
 
-
     /**
      * A helper function to obtain the targeted {@link TaskFragment} during
      * {@link #intercept(Intent, ResolveInfo, ActivityInfo, String, Task, TaskFragment, int, int,
@@ -183,6 +193,14 @@ class ActivityStartInterceptor {
         }
         return TaskFragment.fromTaskFragmentToken(taskFragToken, mService);
     }
+    
+    // TODO: consolidate this method with the one below since this is used for test only.
+    boolean intercept(Intent intent, ResolveInfo rInfo, ActivityInfo aInfo, String resolvedType,
+            Task inTask, TaskFragment inTaskFragment, int callingPid, int callingUid,
+            ActivityOptions activityOptions, TaskDisplayArea presumableLaunchDisplayArea) {
+        return intercept(intent, rInfo, aInfo, resolvedType, inTask, inTaskFragment, callingPid,
+                callingUid, activityOptions,  presumableLaunchDisplayArea);
+    }
 
     /**
      * Intercept the launch intent based on various signals. If an interception happened the
@@ -192,7 +210,7 @@ class ActivityStartInterceptor {
      */
     boolean intercept(Intent intent, ResolveInfo rInfo, ActivityInfo aInfo, String resolvedType,
             Task inTask, TaskFragment inTaskFragment, int callingPid, int callingUid,
-            ActivityOptions activityOptions, TaskDisplayArea presumableLaunchDisplayArea) {
+            ActivityOptions activityOptions, TaskDisplayArea presumableLaunchDisplayArea, boolean componentSpecified) {
         mUserManager = UserManager.get(mServiceContext);
 
         mIntent = intent;
@@ -205,6 +223,7 @@ class ActivityStartInterceptor {
         mInTaskFragment = inTaskFragment;
         mActivityOptions = activityOptions;
         mPresumableLaunchDisplayArea = presumableLaunchDisplayArea;
+        mComponentSpecified = componentSpecified;
 
         if (interceptQuietProfileIfNeeded()) {
             // If work profile is turned off, skip the work challenge since the profile can only
@@ -475,6 +494,11 @@ class ActivityStartInterceptor {
         return true;
     }
 
+    private boolean isPackageSuspended() {
+        return mAInfo != null && mAInfo.applicationInfo != null
+                && (mAInfo.applicationInfo.flags & FLAG_SUSPENDED) != 0;
+    }
+
     private boolean interceptHomeIfNeeded() {
         if (mPresumableLaunchDisplayArea == null || mService.mRootWindowContainer == null) {
             return false;
@@ -495,6 +519,10 @@ class ActivityStartInterceptor {
                 mPresumableLaunchDisplayArea)) {
             // Secondary home cannot be launched on the display area.
             return false;
+        }    
+    
+        if (mService.mRootWindowContainer == null) {
+            return false;
         }
 
         // At this point we have a primary home intent for a display that does not support primary
@@ -502,23 +530,68 @@ class ActivityStartInterceptor {
         Pair<ActivityInfo, Intent> info = mService.mRootWindowContainer
                 .resolveSecondaryHomeActivity(mUserId, mPresumableLaunchDisplayArea);
         mIntent = info.second;
-        // The new task flag is needed because the home activity should already be in the root task
-        // and should not be moved to the caller's task. Also, activities cannot change their type,
-        // e.g. a standard activity cannot become a home activity.
-        mIntent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-        mCallingPid = mRealCallingPid;
-        mCallingUid = mRealCallingUid;
-        mResolvedType = null;
 
-        mRInfo = mSupervisor.resolveIntent(mIntent, mResolvedType, mUserId, /* flags= */ 0,
-                mRealCallingUid, mRealCallingPid);
-        mAInfo = mSupervisor.resolveActivity(mIntent, mRInfo, mStartFlags, /*profilerInfo=*/ null);
-        return true;
+        boolean intercepted = false;
+        if (!ACTION_MAIN.equals(mIntent.getAction()) || (!mIntent.hasCategory(CATEGORY_HOME)
+                && !mIntent.hasCategory(CATEGORY_SECONDARY_HOME))) {
+            // not a home intent
+            return false;
+        }
+
+        if (mComponentSpecified) {
+            final ComponentName homeComponent = mIntent.getComponent();
+            final Intent homeIntent = mService.getHomeIntent();
+            final ActivityInfo aInfo = mService.mRootWindowContainer.resolveHomeActivity(
+                    mUserId, homeIntent);
+            if (!aInfo.getComponentName().equals(homeComponent)) {
+                // Do nothing if the intent is not for the default home component.
+                return false;
+            }
+        }
+
+        if (!ActivityRecord.isHomeIntent(mIntent) || mComponentSpecified) {
+            // This is not a standard home intent, make it so if possible.
+            normalizeHomeIntent();
+            intercepted = true;
+        }
+
+        if (intercepted) {
+            mCallingPid = mRealCallingPid;
+            mCallingUid = mRealCallingUid;
+            mResolvedType = null;
+
+            mRInfo = mSupervisor.resolveIntent(mIntent, mResolvedType, mUserId, /* flags= */ 0,
+                    mRealCallingUid, mRealCallingPid);
+            mAInfo = mSupervisor.resolveActivity(mIntent, mRInfo, mStartFlags, /*profilerInfo=*/
+                    null);
+        }
+        return intercepted;
     }
 
-    private boolean isPackageSuspended() {
-        return mAInfo != null && mAInfo.applicationInfo != null
-                && (mAInfo.applicationInfo.flags & FLAG_SUSPENDED) != 0;
+    private void normalizeHomeIntent() {
+        Slog.w(TAG, "The home Intent is not correctly formatted");
+        if (mIntent.getCategories().size() > 1) {
+            Slog.d(TAG, "Purge home intent categories");
+            boolean isSecondaryHome = false;
+            final Object[] categories = mIntent.getCategories().toArray();
+            for (int i = categories.length - 1; i >= 0; i--) {
+                final String category = (String) categories[i];
+                if (CATEGORY_SECONDARY_HOME.equals(category)) {
+                    isSecondaryHome = true;
+                }
+                mIntent.removeCategory(category);
+            }
+            mIntent.addCategory(isSecondaryHome ? CATEGORY_SECONDARY_HOME : CATEGORY_HOME);
+        }
+        if (mIntent.getType() != null || mIntent.getData() != null) {
+            Slog.d(TAG, "Purge home intent data/type");
+            mIntent.setType(null);
+        }
+        if (mComponentSpecified) {
+            Slog.d(TAG, "Purge home intent component, " + mIntent.getComponent());
+            mIntent.setComponent(null);
+        }
+        mIntent.addFlags(FLAG_ACTIVITY_NEW_TASK);
     }
 
     /**
