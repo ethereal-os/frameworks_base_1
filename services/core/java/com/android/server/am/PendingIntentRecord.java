@@ -48,6 +48,7 @@ import android.util.ArraySet;
 import android.util.Slog;
 import android.util.TimeUtils;
 
+import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.os.IResultReceiver;
 import com.android.internal.util.function.pooled.PooledLambda;
 import com.android.server.wm.SafeActivityOptions;

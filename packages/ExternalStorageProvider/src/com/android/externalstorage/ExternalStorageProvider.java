@@ -344,9 +344,6 @@ public class ExternalStorageProvider extends FileSystemProvider {
             return false;
         }
 
-        final String path = getPathFromDocId(documentId);
-        return PATTERN_RESTRICTED_ANDROID_SUBTREES.matcher(path).matches();
-
         try {
             final RootInfo root = getRootFromDocId(documentId);
             final String canonicalPath = getPathFromDocId(documentId);

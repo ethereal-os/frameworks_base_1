@@ -2219,7 +2219,7 @@ public class AppOpsService extends IAppOpsService.Stub {
                 if (totalAttributedOpEntryCount > NUM_ATTRIBUTED_OP_ENTRY_THRESHOLD) {
                     break;
                 }
-                OpEntry opEntry = getOpEntryForResult(curOp, persistentDeviceId);
+                OpEntry opEntry = getOpEntryForResult(curOp, elapsedNow);
                 resOps.add(opEntry);
                 totalAttributedOpEntryCount += opEntry.getAttributedOpEntries().size();
             }
@@ -2236,7 +2236,7 @@ public class AppOpsService extends IAppOpsService.Stub {
                     if (totalAttributedOpEntryCount > NUM_ATTRIBUTED_OP_ENTRY_THRESHOLD) {
                         break;
                     }
-                    OpEntry opEntry = getOpEntryForResult(curOp, persistentDeviceId);
+                    OpEntry opEntry = getOpEntryForResult(curOp, elapsedNow);
                     resOps.add(opEntry);
                     totalAttributedOpEntryCount += opEntry.getAttributedOpEntries().size();
                 }
