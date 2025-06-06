@@ -16,6 +16,8 @@
 
 package com.android.externalstorage;
 
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+
 import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.app.usage.StorageStatsManager;
@@ -71,7 +73,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import java.util.regex.Pattern;
+ 
 /**
  * Presents content of the shared (a.k.a. "external") storage.
  * <p>
@@ -92,6 +95,13 @@ public class ExternalStorageProvider extends FileSystemProvider {
 
     private static final Uri BASE_URI =
             new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT).authority(AUTHORITY).build();
+            
+    /**
+     * Regex for detecting {@code /Android/data/}, {@code /Android/obb/} and
+     * {@code /Android/sandbox/} along with all their subdirectories and content.
+     */
+    private static final Pattern PATTERN_RESTRICTED_ANDROID_SUBTREES =
+            Pattern.compile("^Android/(?:data|obb|sandbox)(?:/.+)?", CASE_INSENSITIVE);            
 
     private static final String PRIMARY_EMULATED_STORAGE_PATH = "/storage/emulated/";
 
@@ -333,6 +343,9 @@ public class ExternalStorageProvider extends FileSystemProvider {
         if (isOnRemovableUsbStorage(documentId)) {
             return false;
         }
+
+        final String path = getPathFromDocId(documentId);
+        return PATTERN_RESTRICTED_ANDROID_SUBTREES.matcher(path).matches();
 
         try {
             final RootInfo root = getRootFromDocId(documentId);
