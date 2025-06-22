@@ -1322,7 +1322,15 @@ public class NotificationManager {
         INotificationManager service = getService();
         try {
             if (Flags.modesApi()) {
-                return service.getAutomaticZenRules();
+                Map<String, AutomaticZenRule> result = new HashMap<>();
+                ParceledListSlice<AutomaticZenRule.AzrWithId> parceledRules =
+                        service.getAutomaticZenRules();
+                if (parceledRules != null) {
+                    for (AutomaticZenRule.AzrWithId rule : parceledRules.getList()) {
+                        result.put(rule.mId, rule.mRule);
+                    }
+                }
+                return result;
             } else {
                 ParceledListSlice<ZenModeConfig.ZenRule> rules = service.getZenRules();
                 Map<String, AutomaticZenRule> ruleMap = new HashMap<>();

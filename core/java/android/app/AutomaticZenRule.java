@@ -250,7 +250,7 @@ public final class AutomaticZenRule implements Parcelable {
             mDeviceEffects = source.readParcelable(null, ZenDeviceEffects.class);
             mAllowManualInvocation = source.readBoolean();
             mIconResId = source.readInt();
-            mTriggerDescription = getTrimmedString(source.readString(), MAX_DESC_LENGTH);
+            mTriggerDescription = getTrimmedString(source.readString8(), MAX_DESC_LENGTH);
             mType = source.readInt();
         }
     }
@@ -532,7 +532,7 @@ public final class AutomaticZenRule implements Parcelable {
             dest.writeParcelable(mDeviceEffects, 0);
             dest.writeBoolean(mAllowManualInvocation);
             dest.writeInt(mIconResId);
-            dest.writeString(mTriggerDescription);
+            dest.writeString8(mTriggerDescription);
             dest.writeInt(mType);
         }
     }
@@ -848,4 +848,41 @@ public final class AutomaticZenRule implements Parcelable {
             return rule;
         }
     }
+
+    /** @hide */
+    public static final class AzrWithId implements Parcelable {
+        public final String mId;
+        public final AutomaticZenRule mRule;
+
+        public AzrWithId(String id, AutomaticZenRule rule) {
+            mId = id;
+            mRule = rule;
+        }
+
+        public static final Creator<AzrWithId> CREATOR = new Creator<>() {
+            @Override
+            public AzrWithId createFromParcel(Parcel in) {
+                return new AzrWithId(
+                        in.readString8(),
+                        in.readParcelable(AutomaticZenRule.class.getClassLoader(),
+                                AutomaticZenRule.class));
+            }
+
+            @Override
+            public AzrWithId[] newArray(int size) {
+                return new AzrWithId[size];
+            }
+        };
+
+        @Override
+        public void writeToParcel(@NonNull Parcel dest, int flags) {
+            dest.writeString8(mId);
+            dest.writeParcelable(mRule, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+    }    
 }

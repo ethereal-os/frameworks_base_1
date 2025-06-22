@@ -361,7 +361,7 @@ public class ZenModeConfig implements Parcelable {
                 len = 0;
             }
             for (int i = 0; i < len; i++) {
-                automaticRules.put(ids[i], (ZenRule) rules.get(i));
+                ruleMap.put(ids[i], (ZenRule) rules.get(i));
             }
         }
     }
@@ -377,9 +377,9 @@ public class ZenModeConfig implements Parcelable {
         dest.writeInt(allowMessagesFrom);
         dest.writeInt(user);
         dest.writeParcelable(manualRule, 0);
-        writeRulesToParcel(automaticRules, dest);
+        writeRulesToParcel(automaticRules, dest, flags);
         if (Flags.modesApi()) {
-            writeRulesToParcel(deletedRules, dest);
+            writeRulesToParcel(deletedRules, dest, flags);
         }
         dest.writeInt(allowAlarms ? 1 : 0);
         dest.writeInt(allowMedia ? 1 : 0);
@@ -393,14 +393,14 @@ public class ZenModeConfig implements Parcelable {
         }
     }
 
-    private static void writeRulesToParcel(ArrayMap<String, ZenRule> ruleMap, Parcel dest) {
+    private static void writeRulesToParcel(ArrayMap<String, ZenRule> ruleMap, Parcel dest, int flags) {
         if (!ruleMap.isEmpty()) {
             final int len = ruleMap.size();
             final String[] ids = new String[len];
             final ArrayList<ZenRule> rules = new ArrayList<>();
             for (int i = 0; i < len; i++) {
                 ids[i] = ruleMap.keyAt(i);
-                rules.add(automaticRules.valueAt(i));
+                rules.add(ruleMap.valueAt(i));
             }
             dest.writeInt(len);
             dest.writeString8Array(ids);
