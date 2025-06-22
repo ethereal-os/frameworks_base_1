@@ -5717,12 +5717,9 @@ public class NotificationManagerService extends SystemService {
         }
 
         @Override
-        public Map<String, AutomaticZenRule> getAutomaticZenRules() {
-            if (!android.app.Flags.modesApi()) {
-                throw new IllegalStateException("getAutomaticZenRules called with flag off!");
-            }
+        public ParceledListSlice<ZenModeConfig.ZenRule> getZenRules() throws RemoteException {
             enforcePolicyAccess(Binder.getCallingUid(), "getAutomaticZenRules");
-            return mZenModeHelper.getAutomaticZenRules();
+            return new ParceledListSlice<ZenModeConfig.ZenRule>(mZenModeHelper.getZenRules());
         }
 
         @Override
