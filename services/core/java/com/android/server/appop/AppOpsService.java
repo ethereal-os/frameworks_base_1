@@ -3971,19 +3971,19 @@ public class AppOpsService extends IAppOpsService.Stub {
         }
 
         finishOperationUnchecked(clientId, code, proxyUid, resolvedProxyPackageName,
-                proxiedUid, resolvedProxiedPackageName, proxiedAttributionTag);
+        	proxiedUid, resolvedProxiedPackageName, proxiedAttributionTag, proxyVirtualDeviceId);
 
         return null;
     }
 
     private void finishOperationUnchecked(IBinder clientId, int code, int uid,
-            String packageName, String attributionTag) {
-        finishOperationUnchecked(clientId, code, -1, null, uid, packageName, attributionTag);
+            String packageName, String attributionTag, int virtualDeviceId) {
+        finishOperationUnchecked(clientId, code, -1, null, uid, packageName, attributionTag, virtualDeviceId);
     }
 
     private void finishOperationUnchecked(IBinder clientId, int code, int proxyUid,
             String proxyPackageName, int proxiedUid,
-            String proxiedPackageName, String attributionTag) {
+            String proxiedPackageName, String attributionTag, int virtualDeviceId) {
         PackageVerificationResult pvr;
         try {
             pvr = verifyAndGetBypass(proxiedUid, proxiedPackageName, attributionTag,
@@ -3992,7 +3992,7 @@ public class AppOpsService extends IAppOpsService.Stub {
                 attributionTag = null;
             }
         } catch (SecurityException e) {
-            logVerifyAndGetBypassFailure(uid, e, "finishOperation");
+            logVerifyAndGetBypassFailure(proxyUid, e, "finishOperation");
             return;
         }
 
@@ -4002,8 +4002,7 @@ public class AppOpsService extends IAppOpsService.Stub {
             if (op == null) {
                 if (DEBUG) {
                 Slog.e(TAG, "Operation not found: uid=" + proxiedUid + " pkg=" + proxiedPackageName
-                        + "("
-                        + attributionTag + ") op=" + AppOpsManager.opToName(code));
+                        + "(" + attributionTag + ") op=" + AppOpsManager.opToName(code));
                 }
                 return;
             }
@@ -4012,7 +4011,7 @@ public class AppOpsService extends IAppOpsService.Stub {
                             new ArrayMap<>()).get(attributionTag);
             if (attributedOp == null) {
                 if (DEBUG) {
-                    Slog.e(TAG, "Attribution not found: uid=" + uid + " pkg=" + packageName + "("
+                    Slog.e(TAG, "Attribution not found: uid=" + proxiedUid + " pkg=" + proxiedPackageName + "("
                             + attributionTag + ") op=" + AppOpsManager.opToName(code));
                 }
                 return;
@@ -4024,7 +4023,7 @@ public class AppOpsService extends IAppOpsService.Stub {
                 if (DEBUG) {
                 Slog.e(TAG, "Operation not started: uid=" + proxiedUid
                         + " pkg=" + proxiedPackageName + "("
-                            + attributionTag + ") op=" + AppOpsManager.opToName(code));
+                        + attributionTag + ") op=" + AppOpsManager.opToName(code));
                 }
             }
         }
