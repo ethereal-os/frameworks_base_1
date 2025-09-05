@@ -361,7 +361,9 @@ public class BackgroundActivityStartController {
             } else {
                 mRealCallingUidProcState = mService.mActiveUids.getUidState(realCallingUid);
                 mRealCallingUidHasAnyVisibleWindow =
-                        mService.hasActiveVisibleWindow(realCallingUid);
+                        (mService.mVisibleActivityProcessTracker.hasVisibleNotPinnedActivity(
+                                realCallingUid) || mService.mActiveUids.hasNonAppVisibleWindow(
+                                realCallingUid));mService.hasActiveVisibleWindow(realCallingUid);
                 mRealCallerApp = mService.getProcessController(realCallingPid, realCallingUid);
                 mIsRealCallingUidPersistentSystemProcess =
                         mRealCallingUidProcState <= ActivityManager.PROCESS_STATE_PERSISTENT_UI;
@@ -839,7 +841,9 @@ public class BackgroundActivityStartController {
 
         // don't abort if the callingUid has a visible window or is a persistent system process
         final int callingUidProcState = mService.mActiveUids.getUidState(callingUid);
-        final boolean callingUidHasAnyVisibleWindow = mService.hasActiveVisibleWindow(callingUid);
+        final boolean callingUidHasAnyVisibleWindow =
+                mService.mVisibleActivityProcessTracker.hasVisibleNotPinnedActivity(callingUid)
+                        || mService.mActiveUids.hasNonAppVisibleWindow(callingUid);
         final boolean isCallingUidPersistentSystemProcess =
                 callingUidProcState <= ActivityManager.PROCESS_STATE_PERSISTENT_UI;
 

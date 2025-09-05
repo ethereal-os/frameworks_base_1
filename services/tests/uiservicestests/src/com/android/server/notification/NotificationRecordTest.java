@@ -38,7 +38,6 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -80,7 +79,6 @@ import androidx.test.runner.AndroidJUnit4;
 
 import com.android.internal.R;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
-import com.android.server.LocalServices;
 import com.android.server.UiServiceTestCase;
 import com.android.server.uri.UriGrantsManagerInternal;
 
@@ -1018,19 +1016,23 @@ public class NotificationRecordTest extends UiServiceTestCase {
         when(ugm.checkGrantUriPermission(anyInt(), eq(null), any(Uri.class),
                 anyInt(), anyInt())).thenThrow(new SecurityException());
 
-        LocalServices.removeServiceForTest(UriGrantsManagerInternal.class);
-        LocalServices.addService(UriGrantsManagerInternal.class, ugm);
-
         channel.setSound(null, null);
         Notification n = new Notification.Builder(mContext, channel.getId())
                 .setSmallIcon(Icon.createWithContentUri(Uri.parse("content://something")))
                 .build();
         StatusBarNotification sbn =
                 new StatusBarNotification(PKG_P, PKG_P, id1, tag1, uid, uid, n, mUser, null, uid);
+                
+        NotificationRecord record = new NotificationRecord(mMockContext, sbn, channel);
+        record.mAm = am;
+        record.mUgmInternal = ugm;                
 
-        assertThrows("App provided uri for p targeting app should throw exception",
-                SecurityException.class,
-                () -> new NotificationRecord(mMockContext, sbn, channel));
+        try {
+            record.calculateGrantableUris();
+            fail("App provided uri for p targeting app should throw exception");
+        } catch (SecurityException e) {
+            // expected
+        }
     }
 
     @Test
@@ -1038,9 +1040,6 @@ public class NotificationRecordTest extends UiServiceTestCase {
         UriGrantsManagerInternal ugm = mock(UriGrantsManagerInternal.class);
         when(ugm.checkGrantUriPermission(anyInt(), eq(null), any(Uri.class),
                 anyInt(), anyInt())).thenThrow(new SecurityException());
-
-        LocalServices.removeServiceForTest(UriGrantsManagerInternal.class);
-        LocalServices.addService(UriGrantsManagerInternal.class, ugm);
 
         channel.setSound(Uri.parse("content://something"), mock(AudioAttributes.class));
 
@@ -1050,6 +1049,10 @@ public class NotificationRecordTest extends UiServiceTestCase {
                 new StatusBarNotification(PKG_P, PKG_P, id1, tag1, uid, uid, n, mUser, null, uid);
 
         NotificationRecord record = new NotificationRecord(mMockContext, sbn, channel);
+        record.mAm = am;
+        record.mUgmInternal = ugm;
+
+        record.calculateGrantableUris();        
         assertEquals(Settings.System.DEFAULT_NOTIFICATION_URI, record.getSound());
     }
 
