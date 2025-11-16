@@ -314,3 +314,4 @@ prebuilt_etc {
     name: "core.protolog.pb",
     src: ":checked-core.protolog.pb",
 }
+
