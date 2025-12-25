@@ -40,7 +40,7 @@ interface IMms {
      * @param messageId An id that uniquely identifies the message requested to be sent.
      * @param attributionTag a tag that attributes the call to a client App.
      */
-    void sendMessage(int subId, String callingPkg, in Uri contentUri,
+    void sendMessage(int subId, int callingUser, String callingPkg, in Uri contentUri,
             String locationUrl, in Bundle configOverrides, in PendingIntent sentIntent,
             in long messageId, String attributionTag);
 
@@ -60,7 +60,7 @@ interface IMms {
      * @param messageId An id that uniquely identifies the message requested to be downloaded.
      * @param attributionTag a tag that attributes the call to a client App.
     */
-    void downloadMessage(int subId, String callingPkg, String locationUrl,
+    void downloadMessage(int subId, int callingUser, String callingPkg, String locationUrl,
             in Uri contentUri, in Bundle configOverrides,
             in PendingIntent downloadedIntent, in long messageId, String attributionTag);
 
@@ -90,7 +90,7 @@ interface IMms {
       * @param read if the message is read
       * @return the message URI, null if failed
       */
-    Uri importMultimediaMessage(String callingPkg, in Uri contentUri, String messageId,
+    Uri importMultimediaMessage(int callingUser, String callingPkg, in Uri contentUri, String messageId,
             long timestampSecs, boolean seen, boolean read);
 
     /**
@@ -150,7 +150,7 @@ interface IMms {
      * @param contentUri the content Uri from which to read PDU data of the draft MMS
      * @return the URI of the stored draft message
      */
-    Uri addMultimediaMessageDraft(String callingPkg, in Uri contentUri);
+    Uri addMultimediaMessageDraft(in int callingUser, String callingPkg, in Uri contentUri);
 
     /**
      * Send a system stored MMS message

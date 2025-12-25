@@ -225,7 +225,6 @@ public class KeyguardViewMediatorTest extends SysuiTestCase {
     private @Mock SceneContainerFlags mSceneContainerFlags;
 
     private FakeFeatureFlags mFeatureFlags;
-    private final int mDefaultUserId = 100;
 
     @Before
     public void setUp() throws Exception {
@@ -1080,6 +1079,8 @@ public class KeyguardViewMediatorTest extends SysuiTestCase {
         IRemoteAnimationFinishedCallback callback = mock(IRemoteAnimationFinishedCallback.class);
 
         when(mKeyguardStateController.isKeyguardGoingAway()).thenReturn(true);
+        mViewMediator.hideLocked();
+        processAllMessagesAndBgExecutorMessages();
         mViewMediator.startKeyguardExitAnimation(TRANSIT_OLD_KEYGUARD_GOING_AWAY, apps, wallpapers,
                 null, callback);
         processAllMessagesAndBgExecutorMessages();
@@ -1205,6 +1206,72 @@ public class KeyguardViewMediatorTest extends SysuiTestCase {
         mViewMediator.getViewMediatorCallback().onBouncerSwipeDown();
         verify(mStatusBarKeyguardViewManager).reset(true);
     }
+
+    @Test
+    public void biometricAuthSuccessForCurrentUserDoesProceed() {
+        final int currentUser = 25;
+        setCurrentUser(currentUser, true);
+
+        mViewMediator.mUpdateCallback.onBiometricAuthenticated(currentUser, null, false);
+
+        verify(mDevicePolicyManager).reportSuccessfulBiometricAttempt(currentUser);
+    }
+
+    @Test
+    public void biometricAuthSuccessForDifferentUserDoesNotProceed() {
+        final int newUser = 40;
+        setCurrentUser(newUser, true);
+
+        final int oldUser = 25;
+        mViewMediator.mUpdateCallback.onBiometricAuthenticated(oldUser, null, false);
+
+        verify(mDevicePolicyManager, never()).reportSuccessfulBiometricAttempt(anyInt());
+    }
+
+    @Test
+    public void testDonePendingExecutesOnHideAnimationFinished() {
+        final int currentUser = 25;
+        setCurrentUser(currentUser, true);
+        mViewMediator.mViewMediatorCallback.keyguardDonePending(true, currentUser);
+
+        final ArgumentCaptor<Runnable> onHideAnimationFinished =
+                ArgumentCaptor.forClass(Runnable.class);
+        verify(mStatusBarKeyguardViewManager).startPreHideAnimation(
+                onHideAnimationFinished.capture());
+
+        onHideAnimationFinished.getValue().run();
+
+        // This is executed when the user is incorrect. Should not be called
+        verify(mShadeController, never()).instantCollapseShade();
+    }
+
+    @Test
+    public void testDonePendingExecutesOnHideAnimationFinishedButTerminatesWhenUserHasChanged() {
+        final int currentUser = 25;
+        setCurrentUser(currentUser, true);
+        mViewMediator.mViewMediatorCallback.keyguardDonePending(true, currentUser);
+
+        final ArgumentCaptor<Runnable> onHideAnimationFinished =
+                ArgumentCaptor.forClass(Runnable.class);
+        verify(mStatusBarKeyguardViewManager).startPreHideAnimation(
+                onHideAnimationFinished.capture());
+
+        // User switched before runnable could execute
+        final int newUser = 40;
+        setCurrentUser(newUser, true);
+
+        onHideAnimationFinished.getValue().run();
+
+        // This is executed when the user is incorrect
+        verify(mShadeController).instantCollapseShade();
+    }
+
+    @Test
+    public void testBouncerSwipeDown() {
+        mViewMediator.getViewMediatorCallback().onBouncerSwipeDown();
+        verify(mStatusBarKeyguardViewManager).reset(true);
+    }   
+    
     private void createAndStartViewMediator() {
         createAndStartViewMediator(false);
     }

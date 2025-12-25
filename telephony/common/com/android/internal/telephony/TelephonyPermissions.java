@@ -935,4 +935,24 @@ public final class TelephonyPermissions {
                 || checkCallingOrSelfReadPhoneNumber(context, subId, callingPackage,
                 callingFeatureId, message));
     }
+    
+
+    /**
+     * @return true if the specified {@code uid} is for a ROOT or SHELL process, no matter if runs
+     * as system user or not.
+     */
+    public static boolean isRootOrShell(int uid) {
+        return UserHandle.isSameApp(uid, Process.ROOT_UID) || UserHandle.isSameApp(uid,
+                Process.SHELL_UID);
+    }
+
+
+    /**
+     * @return true if the specified {@code uid} is for a SHELL process, no matter if runs
+     * as system user or not.
+     */
+    public static boolean isShell(int uid) {
+        return UserHandle.isSameApp(uid, Process.SHELL_UID);
+    }
+        
 }

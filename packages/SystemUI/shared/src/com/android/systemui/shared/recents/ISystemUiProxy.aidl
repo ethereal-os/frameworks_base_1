@@ -157,6 +157,11 @@ interface ISystemUiProxy {
      *                   should be the same as the amount of time to trigger a long-press)
      */
     oneway void animateNavBarLongPress(boolean isTouchDown, boolean shrink, long durationMs) = 54;
+    
+    /**
+     * Notifies SystemUI of a KeyEvent of the specified type (e.g. KEYCODE_BACK, KEYCODE_HOME).
+     */
+    oneway void onKeyEvent(int keycode) = 55;    
 
-    // Next id = 55
+    // Next id = 56
 }

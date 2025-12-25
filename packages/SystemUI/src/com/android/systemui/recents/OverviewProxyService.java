@@ -388,6 +388,17 @@ public class OverviewProxyService implements CallbackController<OverviewProxyLis
             verifyCallerAndClearCallingIdentityPostMain("toggleNotificationPanel", () ->
                     mCommandQueue.togglePanel());
         }
+        
+        @Override
+	public void onKeyEvent(int keycode) {
+	    verifyCallerAndClearCallingIdentityPostMain(
+		    "onKeyEvent " + KeyEvent.keyCodeToString(keycode),
+		    () -> {
+		        sendEvent(KeyEvent.ACTION_DOWN, keycode);
+		        sendEvent(KeyEvent.ACTION_UP, keycode);
+		    }
+	    );
+	}
 
         private boolean verifyCaller(String reason) {
             final int callerId = Binder.getCallingUserHandle().getIdentifier();
