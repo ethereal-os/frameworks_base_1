@@ -180,6 +180,7 @@ public final class PixelPropsUtils {
         propsToChangeGeneric.put("TAGS", "release-keys");
         propsToChangeRecentPixel = new HashMap<>();
         propsToChangeRecentPixel.put("BRAND", "google");
+        propsToChangeRecentPixel.put("BOARD", "komodo");
         propsToChangeRecentPixel.put("MANUFACTURER", "Google");
         propsToChangeRecentPixel.put("DEVICE", "komodo");
         propsToChangeRecentPixel.put("PRODUCT", "komodo");
@@ -189,6 +190,7 @@ public final class PixelPropsUtils {
         propsToChangeRecentPixel.put("FINGERPRINT", "google/komodo/komodo:15/BP1A.250405.007/13240079:user/release-keys");
         propsToChangePixelTablet = new HashMap<>();
         propsToChangePixelTablet.put("BRAND", "google");
+        propsToChangePixelTablet.put("BOARD", "tangorpro");
         propsToChangePixelTablet.put("MANUFACTURER", "Google");
         propsToChangePixelTablet.put("DEVICE", "tangorpro");
         propsToChangePixelTablet.put("PRODUCT", "tangorpro");
