@@ -2658,28 +2658,36 @@ public class KeyguardViewMediator implements CoreStartable, Dumpable,
     };
 
     private void tryKeyguardDone(int userId) {
-        String logUserId;
-        if (mKeyguardDonePendingForUser == NO_KEYGUARD_DONE_PENDING) {
-            logUserId = "NO_KEYGUARD_DONE_PENDING";
-        } else {
-            logUserId = "" + mKeyguardDonePendingForUser;
+        int currentUser = KeyguardUpdateMonitor.getCurrentUser();
+
+        // Resolve which user should actually complete dismiss
+        if (userId != currentUser) {
+            Log.w(TAG, "tryKeyguardDone(): user mismatch. "
+                    + "requested=" + userId
+                    + " current=" + currentUser
+                    + " pending=" + mKeyguardDonePendingForUser);
+
+            // Prefer pending user if set, otherwise current user
+            if (mKeyguardDonePendingForUser != NO_KEYGUARD_DONE_PENDING) {
+                userId = mKeyguardDonePendingForUser;
+            } else {
+                userId = currentUser;
+            }
         }
-        Log.d(TAG, "tryKeyguardDone: pendingForUser - " + logUserId
-                + ", animRan - " + mHideAnimationRun + " animRunning - " + mHideAnimationRunning);
-        if (mKeyguardDonePendingForUser == NO_KEYGUARD_DONE_PENDING && mHideAnimationRun
-                && !mHideAnimationRunning) {
-            handleKeyguardDone();
-        } else if (mSurfaceBehindRemoteAnimationRunning) {
-            // We're already running the keyguard exit animation, likely due to an in-progress swipe
-            // to unlock.
-            exitKeyguardAndFinishSurfaceBehindRemoteAnimation(false /* showKeyguard */);
-        } else if (!mHideAnimationRun) {
-            if (DEBUG) Log.d(TAG, "tryKeyguardDone: starting pre-hide animation");
+    
+        // Start pre-hide animation if not already running, and not in remote animation flow
+        if (!mHideAnimationRun && !mSurfaceBehindRemoteAnimationRunning) {
+            Log.d(TAG, "tryKeyguardDone: starting pre-hide animation for user=" + userId);
             mHideAnimationRun = true;
             mHideAnimationRunning = true;
             mKeyguardViewControllerLazy.get()
                     .startPreHideAnimation(new OnHideAnimationFinished(userId));
+            return;
         }
+
+        // If animation already ran, just finish dismiss
+        Log.d(TAG, "tryKeyguardDone(): finishing keyguard done for user=" + userId);
+        handleKeyguardDone();
     }
 
     /**
@@ -2688,6 +2696,7 @@ public class KeyguardViewMediator implements CoreStartable, Dumpable,
      */
     private void handleKeyguardDone() {
         Trace.beginSection("KeyguardViewMediator#handleKeyguardDone");
+        
         final int currentUser = mSelectedUserInteractor.getSelectedUserId();
         mUiBgExecutor.execute(() -> {
             if (mLockPatternUtils.isSecure(currentUser)) {
@@ -2695,6 +2704,7 @@ public class KeyguardViewMediator implements CoreStartable, Dumpable,
             }
         });
         if (DEBUG) Log.d(TAG, "handleKeyguardDone");
+        mIsKeyguardExitAnimationCanceled = false;
         synchronized (this) {
             resetKeyguardDonePendingLocked();
         }
@@ -2943,20 +2953,21 @@ public class KeyguardViewMediator implements CoreStartable, Dumpable,
 		    // Posting to mUiOffloadThread to ensure that calls to ActivityTaskManager 
 		    // will be in order.
 		    final int keyguardFlag = flags;
-		    mUiBgExecutor.execute(() -> {
+		    mHandler.post(() -> {
 		        int currentUserId = KeyguardUpdateMonitor.getCurrentUser();
 		        if (mGoingAwayRequestedForUserId != currentUserId) {
-		            Log.e(TAG, "Not executing goingAwayRunnable() due to userId mismatch. "
-		                    + "Requested: " + mGoingAwayRequestedForUserId + ", current: "
-		                    + currentUserId);
-		            mUpdateMonitor.setKeyguardGoingAway(false);
-		            mKeyguardViewControllerLazy.get().setKeyguardGoingAwayState(false);
-		            return;
+			    Log.e(TAG, "Not executing goingAwayRunnable() due to userId mismatch. "
+				+ "Requested: " + mGoingAwayRequestedForUserId + ", current: "
+				+ currentUserId);
+			    mUpdateMonitor.setKeyguardGoingAway(false);
+			    mKeyguardViewControllerLazy.get().setKeyguardGoingAwayState(false);
+			    return;
 		        }
+
 		        try {
-		            mActivityTaskManagerService.keyguardGoingAway(keyguardFlag);
+			    mActivityTaskManagerService.keyguardGoingAway(keyguardFlag);
 		        } catch (RemoteException e) {
-		            Log.e(TAG, "Error while calling WindowManager", e);
+			    Log.e(TAG, "Error while calling WindowManager", e);
 		        }
 		    });
             }
@@ -3020,12 +3031,15 @@ public class KeyguardViewMediator implements CoreStartable, Dumpable,
                         && mPM.isInteractive(), WakeAndUnlockUpdateReason.HIDE);
             }
 
-            if ((mShowing && !mOccluded) || mUnlockingAndWakingFromDream) {
-                if (mUnlockingAndWakingFromDream) {
-                    Log.d(TAG, "hiding keyguard before waking from dream");
-                }
-                mHiding = true;
-                mKeyguardGoingAwayRunnable.run();
+	    int currentUserId = KeyguardUpdateMonitor.getCurrentUser();
+	    mGoingAwayRequestedForUserId = currentUserId;
+
+	    if ((mShowing && !mOccluded) || mUnlockingAndWakingFromDream) {
+	        if (mUnlockingAndWakingFromDream) {
+		    Log.d(TAG, "hiding keyguard before waking from dream");
+	        }
+	        mHiding = true;
+	        mKeyguardGoingAwayRunnable.run();
             } else {
             	mGoingAwayRequestedForUserId = KeyguardUpdateMonitor.getCurrentUser();
                 Log.d(TAG, "Hiding keyguard while occluded. Just hide the keyguard view and exit.");
@@ -3983,18 +3997,23 @@ public class KeyguardViewMediator implements CoreStartable, Dumpable,
         }
 
         public void run() {
-            Log.d(TAG, "OnHideAnimationFinished.run(" + mUserId + ")");
-            mHideAnimationRunning = false;
-            int currentUserId = KeyguardUpdateMonitor.getCurrentUser();
-            if (mUserId != currentUserId) {
-                Log.e(TAG, "Not executing OnHideAnimationFinished.run() due to userId mismatch. "
-                        + "Requested: " + mUserId + ", current: " + currentUserId);
-                mShadeController.get().instantCollapseShade();
-                resetStateLocked();
-                return;
-            }
+	    Log.d(TAG, "OnHideAnimationFinished.run(" + mUserId + ")");
+	    mHideAnimationRunning = false;
+    	    mHideAnimationRun = true;
+	    int currentUserId = KeyguardUpdateMonitor.getCurrentUser();
+	    if (mUserId != currentUserId) {
+		Log.e(TAG, "Not executing OnHideAnimationFinished.run() due to userId mismatch. "
+		        + "Requested: " + mUserId + ", current: " + currentUserId);
+		mShadeController.get().instantCollapseShade();
+		resetStateLocked();
+		return;
+	    }
 
-            tryKeyguardDone(mUserId);
-        }
+	    synchronized (KeyguardViewMediator.this) {
+		mKeyguardDonePendingForUser = NO_KEYGUARD_DONE_PENDING;
+	    }
+
+	    tryKeyguardDone(mUserId);
+	}
     }    
 }
